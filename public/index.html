@@ -12,21 +12,23 @@
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
   <script type="module" src="/storm.mjs"></script>
+  <script type="module" src="/personalize.mjs"></script>
 </head>
 <body>
   <canvas id="crowstorm" aria-hidden="true"></canvas>
   <div class="scroll-progress" aria-hidden="true"></div>
   <div class="site-shell" id="top">
     <header class="site-header">
-      <a class="wordmark" href="#top" aria-label="Matěj Pertl, top of page"><span class="wordmark-dot" aria-hidden="true"></span>Matěj Pertl</a>
+      <a class="wordmark" href="#top" aria-label="Back to top"><span class="wordmark-dot" aria-hidden="true"></span><span id="brand-name">Matěj Pertl</span></a>
       <nav aria-label="Primary navigation"><a href="#work">Work</a><a href="#games">Games</a><a href="#steam">Steam</a><a href="#contact">Contact</a></nav>
+      <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch to Czech">CZ</button>
       <a class="header-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">GitHub</a>
     </header>
 
     <main>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <h1 id="hero-title">Built for code.<br><em>Made for play.</em></h1>
+          <h1 id="hero-title"><span>Built for code.</span><br><em id="typeout" data-en="Made for play." data-cs="Stvořen pro hru.">Made for play.</em></h1>
           <p>Full-stack developer and gamer. Projects, ranked climbs, and the games in rotation, all in one place.</p>
           <div class="hero-actions"><a class="button button-primary arrow-link" href="#work">Explore my work</a><a class="button button-plain arrow-link" href="#games">See game stats</a></div>
         </div>
@@ -34,7 +36,23 @@
           <div class="identity-orbit"><span class="orbit-line orbit-line-one"></span><span class="orbit-line orbit-line-two"></span><span class="identity-letter">M</span><span class="orbit-dot"></span></div>
           <span class="identity-caption">Developer / player</span>
         </div>
-        <div class="hero-foot"><span>Matěj Pertl</span><span>Code and games, side by side</span></div>
+        <div class="hero-foot"><span id="hero-name">Matěj Pertl</span><span>Code and games, side by side</span></div>
+      </section>
+
+      <section class="studio-section section-block" id="studio" aria-labelledby="studio-title">
+        <div class="section-heading"><h2 id="studio-title">Make it<br><em>yours.</em></h2><p>Choose how this little corner of the internet looks and feels.</p></div>
+        <div class="studio-layout">
+          <div class="studio-controls">
+            <label for="identity-select">Display name</label><select id="identity-select"><option value="real">Matěj Pertl</option><option value="sm1ted">Sm1ted</option><option value="matees">Matees_czech</option></select>
+            <label for="accent-select">Accent color</label><select id="accent-select"><option value="wine">Wine · #58181F</option><option value="ruby">Ruby · #E0115F</option><option value="blue">Indanthrene Blue · #0018A8</option></select>
+            <label for="effect-select">Background effect</label><select id="effect-select"><option value="storm">Crowstorm</option><option value="matrix">Number rain</option><option value="still">Still</option></select>
+            <label for="cursor-select">Cursor style</label><select id="cursor-select"><option value="system">System</option><option value="halo">Halo</option><option value="crosshair">Crosshair</option></select>
+          </div>
+          <aside class="utility-sidebar" aria-label="Time and number tools">
+            <div class="clock-tool"><div class="tool-heading"><h3>Time, anywhere.</h3><label for="timezone-select">Timezone</label></div><select id="timezone-select"><option value="Europe/Prague">Prague</option><option value="UTC">UTC</option><option value="America/New_York">New York</option><option value="America/Los_Angeles">Los Angeles</option><option value="Asia/Tokyo">Tokyo</option><option value="Australia/Sydney">Sydney</option></select><time id="live-clock" aria-live="off">--:--:--</time><span id="clock-date" class="clock-date"></span></div>
+            <div class="converter-tool"><div class="tool-heading"><h3>Number lab.</h3><p>Convert between number systems.</p></div><div class="converter-inputs"><label for="number-base">From</label><select id="number-base"><option value="10">Decimal</option><option value="16">Hexadecimal</option><option value="2">Binary</option><option value="8">Octal</option></select><label for="number-input">Value</label><input id="number-input" type="text" value="42" inputmode="text" spellcheck="false" autocomplete="off"></div><p id="convert-error" class="convert-error" role="status"></p><dl id="conversion-results"><div><dt>Decimal</dt><dd data-base="10">42</dd></div><div><dt>Hexadecimal</dt><dd data-base="16">2A</dd></div><div><dt>Binary</dt><dd data-base="2">101010</dd></div><div><dt>Octal</dt><dd data-base="8">52</dd></div></dl></div>
+          </aside>
+        </div>
       </section>
 
       <section class="work-section section-block" id="work" aria-labelledby="work-title">
@@ -49,6 +67,8 @@
           </div>
         </div>
       </section>
+
+      <section class="achievement-section section-block" id="achievements" aria-labelledby="achievements-title"><div class="section-heading"><h2 id="achievements-title">Beyond the<br><em>classroom.</em></h2><p>A few results I’m proud of.</p></div><div class="achievement-list"><div><span>Haxagon</span><strong>126th</strong><small>in the Czech Republic</small></div><div><span>Regional round</span><strong>4th</strong><small>place</small></div><div><span>Finals</span><strong>27th</strong><small>place</small></div></div><blockquote id="student-quote">“One more commit, then I’ll study for the exam.”</blockquote><a class="inline-link arrow-link" href="https://nacelnik028.github.io/uceni_stranka/" target="_blank" rel="noopener noreferrer">Vítkova procvičovna</a></section>
 
       <section class="games-section section-block" id="games" aria-labelledby="games-title">
         <div class="section-heading"><h2 id="games-title">The<br><em>scoreboard.</em></h2><div class="refresh-group"><span id="updated" role="status">Checking providers…</span><button id="refresh" type="button" class="refresh-button">Refresh stats</button></div></div>
@@ -68,7 +88,7 @@
         </div>
       </section>
 
-      <section class="contact-section section-block" id="contact" aria-labelledby="contact-title"><div><h2 id="contact-title">See you in the<br><em>lobby.</em></h2><p>Find me on GitHub, add a Steam profile, or copy my Discord username.</p></div><div class="contact-actions"><a class="arrow-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">GitHub</a><button id="copyDiscordTag" type="button" aria-label="Copy Discord username m4t335_cz3ch">Discord <strong>m4t335_cz3ch</strong><span id="copy-status" role="status">Copy</span></button><a class="arrow-link" href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer">Steam</a></div></section>
+      <section class="contact-section section-block" id="contact" aria-labelledby="contact-title"><div><h2 id="contact-title">See you in the<br><em>lobby.</em></h2><p>Find me on GitHub, Instagram, Steam, or copy my Discord username.</p></div><div class="contact-actions"><a class="arrow-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">GitHub</a><a class="arrow-link" href="https://www.instagram.com/perma_matees/" target="_blank" rel="noopener noreferrer">Instagram</a><button id="copyDiscordTag" type="button" aria-label="Copy Discord username m4t335_cz3ch">Discord <strong>m4t335_cz3ch</strong><span id="copy-status" role="status">Copy</span></button><a class="arrow-link" href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer">Steam</a></div></section>
     </main>
     <footer><span>© <span id="year">2026</span> Matěj Pertl</span><span>Built for code and everything between.</span><a href="#top">Back to top</a></footer>
   </div>
