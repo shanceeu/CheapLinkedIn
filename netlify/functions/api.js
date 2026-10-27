@@ -29,14 +29,6 @@ function toSafeString(value) {
   return String(value).trim();
 }
 
-function extractFromHtml(html, patterns, fallback = "-") {
-  for (const pattern of patterns) {
-    const match = html.match(pattern);
-    if (match && match[1]) return match[1].trim();
-  }
-  return fallback;
-}
-
 function flattenObject(value, result = {}) {
   if (!value || typeof value !== "object") return result;
 
@@ -78,12 +70,12 @@ function getFallbackLeague(name) {
 function getFallbackRocket(player) {
   return jsonResponse(200, {
     summary: {
-      rank: "Add Ballchasing key",
+      rank: "Add tracker parser fallback",
       mmr: "-",
       wins: "-",
       goals: "-",
-      season: "-",
-      platform: "Ballchasing"
+      season: "Current",
+      platform: player || "Epic"
     }
   });
 }
@@ -99,6 +91,141 @@ function getFallbackLeetify() {
       rank: "-"
     }
   });
+}
+
+function extractFromHtml(html, patterns, fallback = "-") {
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match && match[1]) return match[1].trim();
+  }
+  return fallback;
+}
+
+function extractFromHtmlData(html, pattern) {
+  const match = html.match(pattern);
+  return match && match[1] ? match[1].trim() : "-";
+}
+
+function buildLeetifyFallbackFromHtml(html) {
+  const kd = extractFromHtml(html, [
+    /"kd"\s*:\s*"?([0-9]+\.?[0-9]?)"?/i,
+    /KD\s*[:<]*\s*([0-9]+\.?[0-9]?)/i,
+    /kdRatio\s*[:=]\s*"?([0-9]+\.?[0-9]?)"?/i
+  ], "-");
+
+  const headshot = extractFromHtml(html, [
+    /"headshot"\s*:\s*"?([0-9]+\.?[0-9]?)%?"?/i,
+    /Headshot\s*[:<]*\s*([0-9]+\.?[0-9]?)%?/i,
+    /headshotPct\s*[:=]\s*"?([0-9]+\.?[0-9]?)%?"?/i
+  ], "-");
+
+  const winRate = extractFromHtml(html, [
+    /"winRate"\s*:\s*"?([0-9]+\.?[0-9]?)%?"?/i,
+    /Win Rate\s*[:<]*\s*([0-9]+\.?[0-9]?)%?/i,
+    /win_rate\s*[:=]\s*"?([0-9]+\.?[0-9]?)%?"?/i
+  ], "-");
+
+  const matches = extractFromHtml(html, [
+    /"matches"\s*:\s*"?([0-9,]+)"?/i,
+    /Matches\s*[:<]*\s*([0-9,]+)/i,
+    /totalMatches\s*[:=]\s*"?([0-9,]+)"?/i
+  ], "-");
+
+  const rating = extractFromHtml(html, [
+    /"rating"\s*:\s*"?([0-9]+\.?[0-9]?)"?/i,
+    /Rating\s*[:<]*\s*([0-9]+\.?[0-9]?)/i,
+    /elo\s*[:=]\s*"?([0-9]+\.?[0-9]?)"?/i
+  ], "-");
+
+  const rank = extractFromHtml(html, [
+    /"rank"\s*:\s*"?([^"\n<>]+)"?/i,
+    /Rank\s*[:<]*\s*([^<\n]+?)(?:<|\s*\|)/i,
+    /tier\s*[:=]\s*"?([^"\n<>]+)"?/i,
+    /division\s*[:=]\s*"?([^"\n<>]+)"?/i
+  ], "-");
+
+  return {
+    kd: kd === "-" ? "-" : kd,
+    headshot: headshot === "-" ? "-" : `${headshot}${headshot.includes("%") ? "" : "%"}`,
+    winRate: winRate === "-" ? "-" : `${winRate}${winRate.includes("%") ? "" : "%"}`,
+    matches: matches === "-" ? "-" : matches,
+    rating: rating === "-" ? "-" : rating,
+    rank: rank === "-" ? "-" : rank
+  };
+}
+
+function buildTrackerFallbackFromHtml(html, kind) {
+  if (kind === "league") {
+    const name = extractFromHtml(html, [
+      /summoner\s*[:=]\s*"?([^"<,]+)"?/i,
+      /profile-name[^>]*>([^<]+)</i,
+      /player-name[^>]*>([^<]+)</i
+    ], "League player");
+
+    const rank = extractFromHtml(html, [
+      /rank\s*[:=]\s*"?([^"<]+)"?/i,
+      /"rank"\s*:\s*"?([^"\n]+)"?/i,
+      /tier[^>]*>([^<]+)</i
+    ], "Unranked");
+
+    const lp = extractFromHtml(html, [
+      /(\d+)\s*LP/i,
+      /league points[^0-9]*(\d+)/i
+    ], "-");
+
+    const winRate = extractFromHtml(html, [
+      /(\d+%?)\s*win/i,
+      /win rate[^\d]*(\d+%)/i
+    ], "-");
+
+    const games = extractFromHtml(html, [
+      /(\d+)\s*games?/i,
+      /total games[^\d]*(\d+)/i
+    ], "-");
+
+    return {
+      name,
+      rank,
+      lp,
+      winRate,
+      games,
+      main: "Mid",
+      champions: "Ahri / Akali"
+    };
+  }
+
+  if (kind === "rocket") {
+    const rank = extractFromHtml(html, [
+      /(Unranked|Bronze|Silver|Gold|Platinum|Diamond|Champion|Grand Champion|Supersonic Legend)/i,
+      /rank[^>]*>([^<]+)</i
+    ], "Unranked");
+
+    const mmr = extractFromHtml(html, [
+      /(\d{2,})\s*MMR/i,
+      /MMR[^0-9]*(\d{2,})/i
+    ], "-");
+
+    const wins = extractFromHtml(html, [
+      /(\d+)\s*Wins/i,
+      /wins[^0-9]*(\d+)/i
+    ], "-");
+
+    const goals = extractFromHtml(html, [
+      /(\d+)\s*Goals/i,
+      /goals[^0-9]*(\d+)/i
+    ], "-");
+
+    return {
+      rank,
+      mmr,
+      wins,
+      goals,
+      season: "Current",
+      platform: "Epic"
+    };
+  }
+
+  return {};
 }
 
 exports.handler = async function (event) {
@@ -193,44 +320,51 @@ async function getLeetifyData(qs) {
   const steamId = qs.steamId || "76561199147369622";
   const apiKey = process.env.LEETIFY_API_KEY;
 
-  const endpoints = [];
+  const attempts = [];
+
   if (apiKey) {
-    endpoints.push({
+    attempts.push({
       url: `https://leetify.com/api/profile/${steamId}`,
       headers: { "User-Agent": "Mozilla/5.0", Authorization: `Bearer ${apiKey}` }
     });
   }
-  endpoints.push({
-    url: `https://leetify.com/api/profile/${steamId}`,
+
+  attempts.push({
+    url: `https://leetify.com/app/profile/${steamId}`,
     headers: { "User-Agent": "Mozilla/5.0" }
   });
 
-  for (const candidate of endpoints) {
+  for (const candidate of attempts) {
     try {
       const res = await fetch(candidate.url, { headers: candidate.headers });
       const text = await res.text();
       if (!text || text.trim() === "") continue;
 
-      let json;
       try {
-        json = JSON.parse(text);
-      } catch {
-        continue;
+        const json = JSON.parse(text);
+        const flat = flattenObject(json);
+        const stats = {
+          kd: normalizeMetric(pickFirstValue(flat, ["kd", "kdRatio", "killDeathRatio", "kdr"])) || "-",
+          headshot: normalizeMetric(pickFirstValue(flat, ["headshot", "headshotPct", "headshot_pct", "headshotPercentage"])) || "-",
+          winRate: normalizeMetric(pickFirstValue(flat, ["winRate", "winrate", "win_rate", "winRatePct"])) || "-",
+          matches: normalizeMetric(pickFirstValue(flat, ["matches", "totalMatches", "matchCount", "gamesPlayed"])) || "-",
+          rating: normalizeMetric(pickFirstValue(flat, ["rating", "elo", "mmr", "rankRating"])) || "-",
+          rank: toSafeString(pickFirstValue(flat, ["rank", "division", "tier", "rankName"])) || "-"
+        };
+
+        if (stats.kd !== "-" || stats.rating !== "-" || stats.rank !== "-") {
+          return jsonResponse(200, { stats });
+        }
+      } catch (err) {
+        // continue with HTML fallback
       }
 
-      const flat = flattenObject(json);
-      const stats = {
-        kd: normalizeMetric(pickFirstValue(flat, ["kd", "kdRatio", "killDeathRatio", "kdr"])) || "-",
-        headshot: normalizeMetric(pickFirstValue(flat, ["headshot", "headshotPct", "headshot_pct", "headshotPercentage"])) || "-",
-        winRate: normalizeMetric(pickFirstValue(flat, ["winRate", "winrate", "win_rate", "winRatePct"])) || "-",
-        matches: normalizeMetric(pickFirstValue(flat, ["matches", "totalMatches", "matchCount", "gamesPlayed"])) || "-",
-        rating: normalizeMetric(pickFirstValue(flat, ["rating", "elo", "mmr", "rankRating"])) || "-",
-        rank: toSafeString(pickFirstValue(flat, ["rank", "division", "tier", "rankName"])) || "-"
-      };
-
-      return jsonResponse(200, { stats });
+      const htmlStats = buildLeetifyFallbackFromHtml(text);
+      if (htmlStats.kd !== "-" || htmlStats.rating !== "-" || htmlStats.rank !== "-") {
+        return jsonResponse(200, { stats: htmlStats });
+      }
     } catch (err) {
-      // continue trying next candidate
+      // continue to next candidate
     }
   }
 
@@ -240,52 +374,68 @@ async function getLeetifyData(qs) {
 async function getLeagueData(qs) {
   const username = qs.username || "Sm1ted%23Diff";
   const displayName = decodeURIComponent(username).replace(/%23/g, "#");
-  const apiKey = process.env.RIOT_API_KEY;
+  const riotApiKey = process.env.RIOT_API_KEY;
   const region = qs.region || "na1";
 
-  if (!apiKey) {
-    return getFallbackLeague(displayName);
+  if (riotApiKey) {
+    try {
+      const summonerRes = await fetch(
+        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(displayName)}`,
+        {
+          headers: { "X-Riot-Token": riotApiKey }
+        }
+      );
+
+      if (summonerRes.ok) {
+        const summoner = await summonerRes.json();
+        const entriesRes = await fetch(
+          `https://${region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.id}`,
+          { headers: { "X-Riot-Token": riotApiKey } }
+        );
+
+        if (entriesRes.ok) {
+          const entries = await entriesRes.json();
+          const rankedEntry = (entries || []).find((entry) => entry.queueType === "RANKED_SOLO_5x5") || entries[0] || {};
+          const tier = rankedEntry.tier || "Unranked";
+          const rank = rankedEntry.rank ? `${tier} ${rankedEntry.rank}` : tier;
+          const lp = rankedEntry.leaguePoints ?? "-";
+          const wins = Number(rankedEntry.wins || 0);
+          const losses = Number(rankedEntry.losses || 0);
+          const totalGames = wins + losses > 0 ? wins + losses : "-";
+
+          return jsonResponse(200, {
+            summary: {
+              name: summoner.name || displayName,
+              rank,
+              lp: String(lp),
+              winRate: totalGames === "-" ? "-" : `${Math.round((wins / totalGames) * 100)}%`,
+              games: String(totalGames),
+              main: "Mid",
+              champions: "Ahri / Akali"
+            }
+          });
+        }
+      }
+    } catch (err) {
+      // fall through to tracker.gg fallback
+    }
   }
 
   try {
-    const summonerRes = await fetch(
-      `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(displayName)}`,
-      { headers: { "X-Riot-Token": apiKey } }
-    );
-
-    if (!summonerRes.ok) {
-      return getFallbackLeague(displayName);
-    }
-
-    const summoner = await summonerRes.json();
-
-    const entriesRes = await fetch(
-      `https://${region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.id}`,
-      { headers: { "X-Riot-Token": apiKey } }
-    );
-
-    if (!entriesRes.ok) {
-      return getFallbackLeague(summoner.name || displayName);
-    }
-
-    const entries = await entriesRes.json();
-    const rankedEntry = (entries || []).find((entry) => entry.queueType === "RANKED_SOLO_5x5") || entries[0] || {};
-    const tier = rankedEntry.tier || "Unranked";
-    const rank = rankedEntry.rank ? `${tier} ${rankedEntry.rank}` : tier;
-    const lp = rankedEntry.leaguePoints ?? "-";
-    const wins = Number(rankedEntry.wins || 0);
-    const losses = Number(rankedEntry.losses || 0);
-    const totalGames = wins + losses > 0 ? wins + losses : "-";
+    const trackerUrl = `https://tracker.gg/lol/profile/riot/${encodeURIComponent(username)}/overview`;
+    const res = await fetch(trackerUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
+    const html = await res.text();
+    const summary = buildTrackerFallbackFromHtml(html, "league");
 
     return jsonResponse(200, {
       summary: {
-        name: summoner.name || displayName,
-        rank,
-        lp: String(lp),
-        winRate: totalGames === "-" ? "-" : `${Math.round((wins / totalGames) * 100)}%`,
-        games: String(totalGames),
-        main: "Mid",
-        champions: "Ahri / Akali"
+        name: summary.name || displayName,
+        rank: summary.rank || "Unranked",
+        lp: summary.lp || "-",
+        winRate: summary.winRate || "-",
+        games: summary.games || "-",
+        main: summary.main || "Mid",
+        champions: summary.champions || "Ahri / Akali"
       }
     });
   } catch (err) {
@@ -295,52 +445,58 @@ async function getLeagueData(qs) {
 
 async function getRocketData(qs) {
   const player = qs.player || "Matees_czech";
-  const apiKey = process.env.BALLCHASING_API_KEY;
+  const ballchasingApiKey = process.env.BALLCHASING_API_KEY;
 
-  if (!apiKey) {
-    return getFallbackRocket(player);
+  if (ballchasingApiKey) {
+    try {
+      const url = `https://ballchasing.com/api/replays?player-name=${encodeURIComponent(player)}&sort=-created&count=5`;
+      const res = await fetch(url, {
+        headers: {
+          Authorization: ballchasingApiKey,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (res.ok) {
+        const payload = await res.json();
+        const replay = (payload.list || payload.replays || [])[0];
+
+        if (replay) {
+          const playerStats = replay.player_stats || {};
+          return jsonResponse(200, {
+            summary: {
+              rank: replay.rank || "Unranked",
+              mmr: String(playerStats.mmr ?? "-"),
+              wins: String(playerStats.wins ?? "-"),
+              goals: String(playerStats.goals ?? "-"),
+              season: replay.playlist || "Current",
+              platform: "Ballchasing"
+            }
+          });
+        }
+      }
+    } catch (err) {
+      // fallback to tracker page
+    }
   }
 
   try {
-    const url = `https://ballchasing.com/api/replays?player-name=${encodeURIComponent(player)}&sort=-created&count=5`;
-    const res = await fetch(url, {
-      headers: {
-        Authorization: apiKey,
-        "Content-Type": "application/json"
-      }
-    });
-
-    if (!res.ok) {
-      return getFallbackRocket(player);
-    }
-
-    const payload = await res.json();
-    const replay = (payload.list || payload.replays || [])[0];
-
-    if (!replay) {
-      return getFallbackRocket(player);
-    }
-
-    const playerStats = replay.player_stats || {};
-    const mmr = playerStats.mmr ?? "-";
-    const wins = replay.team_size ? playerStats.wins ?? "-" : "-";
-    const goals = playerStats.goals ?? "-";
+    const trackerUrl = `https://rocketleague.tracker.network/rocket-league/profile/epic/${encodeURIComponent(player)}/overview`;
+    const res = await fetch(trackerUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
+    const html = await res.text();
+    const summary = buildTrackerFallbackFromHtml(html, "rocket");
 
     return jsonResponse(200, {
       summary: {
-        rank: replay.rank || "Unranked",
-        mmr: String(mmr),
-        wins: String(wins),
-        goals: String(goals),
-        season: replay.playlist || "Current",
-        platform: "Ballchasing"
+        rank: summary.rank || "Unranked",
+        mmr: summary.mmr || "-",
+        wins: summary.wins || "-",
+        goals: summary.goals || "-",
+        season: summary.season || "Current",
+        platform: summary.platform || "Epic"
       }
     });
   } catch (err) {
     return getFallbackRocket(player);
   }
 }
-
-
-
-
