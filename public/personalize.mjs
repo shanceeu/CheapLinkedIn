@@ -2,6 +2,7 @@ import { convertInteger } from "./converter.mjs";
 import { language, locale, onLanguageChange, setLanguage, t, translateStatic } from "./i18n.mjs";
 
 const $ = selector => document.querySelector(selector);
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const preferences = {
   identity: ["real", "sm1ted", "matees"],
   accent: ["wine", "ruby", "blue"],
@@ -33,12 +34,62 @@ function bindChoice(id, key, fallback, apply) {
     apply(select.value);
   });
 }
-bindChoice("#identity-select", "identity", "real", value => {
-  $("#brand-name").textContent = names[value];
-  $("#hero-name").textContent = names[value];
-  $(".identity-letter").textContent = names[value][0].toUpperCase();
+const identitySelect = $("#identity-select");
+const nameKeys = Object.keys(names);
+let nameKey = saved("identity", "real");
+let nameTimer;
+let nameCycle;
+identitySelect.value = nameKey;
+function setDisplayedName(value) {
+  $("#brand-name").textContent = value;
+  $("#hero-name").textContent = value;
+}
+function showName(key, animate = true) {
+  clearTimeout(nameTimer);
+  nameKey = key;
+  identitySelect.value = key;
+  const name = names[key];
+  if (!animate || reducedMotion.matches) {
+    setDisplayedName(name);
+    $(".identity-letter").textContent = name[0].toUpperCase();
+    return;
+  }
+  let remaining = $("#brand-name").textContent.length;
+  let written = 0;
+  function step() {
+    if (remaining > 0) {
+      remaining--;
+      setDisplayedName($("#brand-name").textContent.slice(0, remaining));
+      nameTimer = setTimeout(step, 35);
+    } else if (written < name.length) {
+      written++;
+      setDisplayedName(name.slice(0, written));
+      nameTimer = setTimeout(step, 70);
+    } else $(".identity-letter").textContent = name[0].toUpperCase();
+  }
+  step();
+}
+function scheduleName() {
+  clearTimeout(nameCycle);
+  if (reducedMotion.matches || document.hidden) return;
+  nameCycle = setTimeout(() => {
+    showName(nameKeys[(nameKeys.indexOf(nameKey) + 1) % nameKeys.length]);
+    scheduleName();
+  }, 5000);
+}
+showName(nameKey, false);
+scheduleName();
+identitySelect.addEventListener("change", () => {
+  localStorage.setItem("site-identity", identitySelect.value);
+  showName(identitySelect.value);
+  scheduleName();
 });
-bindChoice("#accent-select", "accent", "wine", value => document.documentElement.dataset.accent = value);
+reducedMotion.addEventListener("change", () => { showName(nameKey, false); scheduleName(); });
+document.addEventListener("visibilitychange", scheduleName);
+bindChoice("#accent-select", "accent", "wine", value => {
+  document.documentElement.dataset.accent = value;
+  $("meta[name=theme-color]").content = { wine: "#58181F", ruby: "#E0115F", blue: "#0018A8" }[value];
+});
 bindChoice("#effect-select", "effect", "storm", value => {
   document.documentElement.dataset.effect = value;
   window.dispatchEvent(new CustomEvent("site-effect-change", { detail: value }));
@@ -48,12 +99,15 @@ const cursor = document.createElement("div");
 cursor.id = "custom-cursor";
 cursor.setAttribute("aria-hidden", "true");
 document.body.append(cursor);
-bindChoice("#cursor-select", "cursor", "system", value => { document.documentElement.dataset.cursor = value; });
+bindChoice("#cursor-select", "cursor", "system", value => {
+  document.documentElement.dataset.cursor = value;
+  if (value !== "halo") cursor.classList.remove("visible");
+});
 window.addEventListener("pointermove", event => {
-  if (event.pointerType === "touch") return;
+  if (event.pointerType === "touch" || document.documentElement.dataset.cursor !== "halo") return;
   cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
   cursor.classList.add("visible");
-  cursor.classList.toggle("over-action", Boolean(event.target.closest("a, button, select, input")));
+  cursor.classList.toggle("over-action", event.target instanceof Element && Boolean(event.target.closest("a, button, select, input")));
 }, { passive: true });
 document.addEventListener("pointerout", event => {
   if (!event.relatedTarget) cursor.classList.remove("visible");
@@ -95,8 +149,24 @@ $("#number-base").addEventListener("change", updateConversion);
 onLanguageChange(updateConversion);
 updateConversion();
 
+const drawer = $("#tool-drawer");
+const toolsToggle = $("#tools-toggle");
+toolsToggle.addEventListener("click", () => {
+  drawer.showModal();
+  toolsToggle.setAttribute("aria-expanded", "true");
+  $("#number-input").focus();
+});
+$("#tools-close").addEventListener("click", () => drawer.close());
+drawer.addEventListener("click", event => {
+  const bounds = drawer.getBoundingClientRect();
+  if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) drawer.close();
+});
+drawer.addEventListener("close", () => {
+  toolsToggle.setAttribute("aria-expanded", "false");
+  toolsToggle.focus();
+});
+
 const typeout = $("#typeout");
-const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 let typeTimer;
 function startTypeout() {
   clearTimeout(typeTimer);

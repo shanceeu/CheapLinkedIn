@@ -1,6 +1,7 @@
 const cs = {
   "Back to top": "Zpět nahoru", "Work": "Tvorba", "Games": "Hry", "Contact": "Kontakt", "Switch to Czech": "Přepnout do češtiny", "Switch to English": "Switch to English",
   "Primary navigation": "Hlavní navigace", "Selected repositories": "Vybrané repozitáře", "Time and number tools": "Čas a číselné nástroje", "Copy Discord username m4t335_cz3ch": "Zkopírovat Discord jméno m4t335_cz3ch", "Page sections": "Sekce stránky", "Achievements": "Úspěchy",
+  "Tools": "Nástroje", "Page color": "Barva stránky", "Time tools": "Časové nástroje", "Close converter": "Zavřít převodník", "Close": "Zavřít",
   "Built for code.": "Stvořen pro kód.", "Made for play.": "Stvořen pro hru.",
   "Full-stack developer and gamer. Projects, ranked climbs, and the games in rotation, all in one place.": "Full-stack vývojář a hráč. Projekty, postup v žebříčcích a hry, které právě hraju, na jednom místě.",
   "Explore my work": "Prohlédnout tvorbu", "See game stats": "Zobrazit herní statistiky", "Developer / player": "Vývojář / hráč", "Code and games, side by side": "Kód a hry vedle sebe",

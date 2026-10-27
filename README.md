@@ -6,7 +6,9 @@ The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware
 
 An original canvas atmosphere adds a slow crimson vortex and flock silhouettes behind the page. It pauses when the tab is hidden and becomes static when reduced motion is requested. Game panels use softer rounded surfaces.
 
-The Studio section lets visitors choose the displayed name (Matěj Pertl, Sm1ted, or Matees_czech), English or Czech, wine/ruby/Indanthrene Blue accents, Crowstorm/number rain/still backgrounds, and system/halo/crosshair cursors. Choices are saved in the browser. The hero types its slogan on load, and a chapter rail tracks the current section during scrolling. The page also includes a timezone clock with seconds, a decimal/hexadecimal/binary/octal integer converter, the supplied Haxagon and competition results, student quotes, Instagram, and a link to Vítkova procvičovna. Reduced motion stops ambient animation and type-out.
+The Studio section lets visitors choose the displayed name (Matěj Pertl, Sm1ted, or Matees_czech), English or Czech, wine/ruby/Indanthrene Blue page colors, Crowstorm/number rain/still backgrounds, and system/halo/crosshair cursors. Choices are saved in the browser. The name cycles with a typewriter effect about every five seconds; reduced motion shows it without animation. The hero types its slogan on load, and a chapter rail tracks the current section during scrolling. The page also includes a timezone clock with seconds and an on-demand Tools sidebar with a decimal/hexadecimal/binary/octal integer converter, the supplied Haxagon and competition results, student quotes, Instagram, and a link to Vítkova procvičovna. Reduced motion stops ambient animation and type-out.
+
+GitHub, Discord, Instagram, Steam, and League of Legends icons are from [Simple Icons](https://simpleicons.org/) (CC0 1.0). The Rocket League mark is an original site illustration.
 
 ## Features carried over from the original site
 
