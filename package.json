@@ -1,0 +1,12 @@
+{
+  "name": "gamer-dev-identity-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dark gaming and developer portfolio with live Steam, CS2, League, and Rocket stats",
+  "scripts": {
+    "start": "node netlify/functions/api.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.11"
+  }
+}
