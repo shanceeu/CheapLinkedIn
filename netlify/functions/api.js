@@ -101,11 +101,6 @@ function extractFromHtml(html, patterns, fallback = "-") {
   return fallback;
 }
 
-function extractFromHtmlData(html, pattern) {
-  const match = html.match(pattern);
-  return match && match[1] ? match[1].trim() : "-";
-}
-
 function buildLeetifyFallbackFromHtml(html) {
   const kd = extractFromHtml(html, [
     /"kd"\s*:\s*"?([0-9]+\.?[0-9]?)"?/i,
@@ -372,18 +367,16 @@ async function getLeetifyData(qs) {
 }
 
 async function getLeagueData(qs) {
-  const username = qs.username || "Sm1ted%23Diff";
-  const displayName = decodeURIComponent(username).replace(/%23/g, "#");
+  const username = qs.username || "Sm1ted#Diff";
+  const displayName = decodeURIComponent(String(username)).replace(/%23/g, "#").replace(/#/g, "%23");
   const riotApiKey = process.env.RIOT_API_KEY;
   const region = qs.region || "na1";
 
   if (riotApiKey) {
     try {
       const summonerRes = await fetch(
-        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(displayName)}`,
-        {
-          headers: { "X-Riot-Token": riotApiKey }
-        }
+        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(displayName.replace(/%23/g, "#"))}`,
+        { headers: { "X-Riot-Token": riotApiKey } }
       );
 
       if (summonerRes.ok) {
@@ -422,7 +415,8 @@ async function getLeagueData(qs) {
   }
 
   try {
-    const trackerUrl = `https://tracker.gg/lol/profile/riot/${encodeURIComponent(username)}/overview`;
+    const trackerUsername = encodeURIComponent(String(username).replace(/#/g, "%23"));
+    const trackerUrl = `https://tracker.gg/lol/profile/riot/${trackerUsername}/overview`;
     const res = await fetch(trackerUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
     const html = await res.text();
     const summary = buildTrackerFallbackFromHtml(html, "league");
@@ -444,7 +438,7 @@ async function getLeagueData(qs) {
 }
 
 async function getRocketData(qs) {
-  const player = qs.player || "Matees_czech";
+  const player = qs.player || "matees_czech";
   const ballchasingApiKey = process.env.BALLCHASING_API_KEY;
 
   if (ballchasingApiKey) {
