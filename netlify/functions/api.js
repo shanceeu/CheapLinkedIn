@@ -1,26 +1,14 @@
 const fetch = require("node-fetch");
 
-exports.handler = async function (event) {
-  const qs = event.queryStringParameters || {};
-  const type = qs.type || "steam";
-
-  try {
-    if (type === "steam") return await getSteamData(qs);
-    if (type === "leetify") return await getLeetifyData(qs);
-    if (type === "lol") return await getLeagueData(qs);
-    if (type === "rocket") return await getRocketData(qs);
-
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Unknown type" })
-    };
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message || "Server error" })
-    };
-  }
-};
+function jsonResponse(statusCode, payload) {
+  return {
+    statusCode,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  };
+}
 
 function pickFirstValue(obj, keys) {
   for (const key of keys) {
@@ -64,28 +52,77 @@ function flattenObject(value, result = {}) {
   return result;
 }
 
+function getFallbackSteam() {
+  return jsonResponse(200, {
+    mainName: "Steam",
+    recentCount: 0,
+    totalHours: 0,
+    games: []
+  });
+}
+
+function getFallbackLeague(name) {
+  return jsonResponse(200, {
+    summary: {
+      name: name || "League player",
+      rank: "Add Riot API key",
+      lp: "-",
+      winRate: "-",
+      games: "-",
+      main: "-",
+      champions: "-"
+    }
+  });
+}
+
+function getFallbackRocket(player) {
+  return jsonResponse(200, {
+    summary: {
+      rank: "Add Ballchasing key",
+      mmr: "-",
+      wins: "-",
+      goals: "-",
+      season: "-",
+      platform: "Ballchasing"
+    }
+  });
+}
+
+function getFallbackLeetify() {
+  return jsonResponse(200, {
+    stats: {
+      kd: "-",
+      headshot: "-",
+      winRate: "-",
+      matches: "-",
+      rating: "-",
+      rank: "-"
+    }
+  });
+}
+
+exports.handler = async function (event) {
+  const qs = event.queryStringParameters || {};
+  const type = qs.type || "steam";
+
+  try {
+    if (type === "steam") return await getSteamData(qs);
+    if (type === "leetify") return await getLeetifyData(qs);
+    if (type === "lol") return await getLeagueData(qs);
+    if (type === "rocket") return await getRocketData(qs);
+
+    return jsonResponse(400, { error: "Unknown type" });
+  } catch (err) {
+    return jsonResponse(500, { error: err.message || "Server error" });
+  }
+};
+
 async function getSteamData(qs) {
   const accounts = (qs.accounts || "76561199147369622,76561199113854269,76561199527518684").split(",").filter(Boolean);
   const steamApiKey = process.env.STEAM_API_KEY;
 
-  if (!steamApiKey) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        mainName: "Steam",
-        recentCount: 0,
-        totalHours: 0,
-        games: []
-      })
-    };
-  }
-
-  if (!accounts.length) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ games: [], recentCount: 0, totalHours: 0 })
-    };
-  }
+  if (!steamApiKey) return getFallbackSteam();
+  if (!accounts.length) return jsonResponse(200, { games: [], recentCount: 0, totalHours: 0 });
 
   const seen = new Map();
   let recentCount = 0;
@@ -144,130 +181,166 @@ async function getSteamData(qs) {
     }
   }
 
-  const games = Array.from(seen.values());
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      mainName,
-      recentCount,
-      totalHours: Math.round(totalHours),
-      games
-    })
-  };
+  return jsonResponse(200, {
+    mainName,
+    recentCount,
+    totalHours: Math.round(totalHours),
+    games: Array.from(seen.values())
+  });
 }
 
 async function getLeetifyData(qs) {
   const steamId = qs.steamId || "76561199147369622";
-  const url = `https://leetify.com/api/profile/${steamId}`;
+  const apiKey = process.env.LEETIFY_API_KEY;
 
-  const res = await fetch(url, {
+  const endpoints = [];
+  if (apiKey) {
+    endpoints.push({
+      url: `https://leetify.com/api/profile/${steamId}`,
+      headers: { "User-Agent": "Mozilla/5.0", Authorization: `Bearer ${apiKey}` }
+    });
+  }
+  endpoints.push({
+    url: `https://leetify.com/api/profile/${steamId}`,
     headers: { "User-Agent": "Mozilla/5.0" }
   });
 
-  const text = await res.text();
-  let json;
+  for (const candidate of endpoints) {
+    try {
+      const res = await fetch(candidate.url, { headers: candidate.headers });
+      const text = await res.text();
+      if (!text || text.trim() === "") continue;
 
-  try {
-    json = JSON.parse(text);
-  } catch {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        stats: {
-          kd: "-",
-          headshot: "-",
-          winRate: "-",
-          matches: "-",
-          rating: "-",
-          rank: "-"
-        }
-      })
-    };
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch {
+        continue;
+      }
+
+      const flat = flattenObject(json);
+      const stats = {
+        kd: normalizeMetric(pickFirstValue(flat, ["kd", "kdRatio", "killDeathRatio", "kdr"])) || "-",
+        headshot: normalizeMetric(pickFirstValue(flat, ["headshot", "headshotPct", "headshot_pct", "headshotPercentage"])) || "-",
+        winRate: normalizeMetric(pickFirstValue(flat, ["winRate", "winrate", "win_rate", "winRatePct"])) || "-",
+        matches: normalizeMetric(pickFirstValue(flat, ["matches", "totalMatches", "matchCount", "gamesPlayed"])) || "-",
+        rating: normalizeMetric(pickFirstValue(flat, ["rating", "elo", "mmr", "rankRating"])) || "-",
+        rank: toSafeString(pickFirstValue(flat, ["rank", "division", "tier", "rankName"])) || "-"
+      };
+
+      return jsonResponse(200, { stats });
+    } catch (err) {
+      // continue trying next candidate
+    }
   }
 
-  const flat = flattenObject(json);
-  const stats = {
-    kd: normalizeMetric(pickFirstValue(flat, ["kd", "kdRatio", "killDeathRatio", "kdr"])) || "-",
-    headshot: normalizeMetric(pickFirstValue(flat, ["headshot", "headshotPct", "headshot_pct", "headshotPercentage"])) || "-",
-    winRate: normalizeMetric(pickFirstValue(flat, ["winRate", "winrate", "win_rate", "winRatePct"])) || "-",
-    matches: normalizeMetric(pickFirstValue(flat, ["matches", "totalMatches", "matchCount", "gamesPlayed"])) || "-",
-    rating: normalizeMetric(pickFirstValue(flat, ["rating", "elo", "mmr", "rankRating"])) || "-",
-    rank: toSafeString(pickFirstValue(flat, ["rank", "division", "tier", "rankName"])) || "-"
-  };
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ stats })
-  };
+  return getFallbackLeetify();
 }
 
 async function getLeagueData(qs) {
   const username = qs.username || "Sm1ted%23Diff";
-  const url = `https://tracker.gg/lol/profile/riot/${username}/overview`;
+  const displayName = decodeURIComponent(username).replace(/%23/g, "#");
+  const apiKey = process.env.RIOT_API_KEY;
+  const region = qs.region || "na1";
 
-  const res = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0" }
-  });
-  const html = await res.text();
+  if (!apiKey) {
+    return getFallbackLeague(displayName);
+  }
 
-  const name = decodeURIComponent(username).replace(/%23/g, "#");
-  const rank = extractFromHtml(html, [
-    /(Unranked|Bronze|Silver|Gold|Platinum|Emerald|Diamond|Master|Grandmaster|Challenger)/i,
-    /"tier":"([A-Za-z]+)"/i,
-    /"rank":"([A-Za-z\s]+)"/i,
-    /\bRank\s*[:=]\s*([A-Za-z\s]+)/i
-  ], "Unranked");
-  const lp = extractFromHtml(html, [/\b(\d+)\s*LP\b/i, /\bLP\s*[:=]\s*(\d+)/i, /\b"lp"\s*:\s*(\d+)/i], "-");
-  const winRate = extractFromHtml(html, [/\b(\d+(?:\.\d+)?)%\s*win\b/i, /winRate\D+(\d+(?:\.\d+)?)%/i, /\b"winRate"\s*:\s*"?(\d+(?:\.\d+)?)%?/i], "-");
-  const games = extractFromHtml(html, [/\b(\d+)\s*games\b/i, /matches\D+(\d+)/i, /\b"matches"\s*:\s*(\d+)/i], "-");
+  try {
+    const summonerRes = await fetch(
+      `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(displayName)}`,
+      { headers: { "X-Riot-Token": apiKey } }
+    );
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
+    if (!summonerRes.ok) {
+      return getFallbackLeague(displayName);
+    }
+
+    const summoner = await summonerRes.json();
+
+    const entriesRes = await fetch(
+      `https://${region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.id}`,
+      { headers: { "X-Riot-Token": apiKey } }
+    );
+
+    if (!entriesRes.ok) {
+      return getFallbackLeague(summoner.name || displayName);
+    }
+
+    const entries = await entriesRes.json();
+    const rankedEntry = (entries || []).find((entry) => entry.queueType === "RANKED_SOLO_5x5") || entries[0] || {};
+    const tier = rankedEntry.tier || "Unranked";
+    const rank = rankedEntry.rank ? `${tier} ${rankedEntry.rank}` : tier;
+    const lp = rankedEntry.leaguePoints ?? "-";
+    const wins = Number(rankedEntry.wins || 0);
+    const losses = Number(rankedEntry.losses || 0);
+    const totalGames = wins + losses > 0 ? wins + losses : "-";
+
+    return jsonResponse(200, {
       summary: {
-        name,
-        rank: toSafeString(rank),
-        lp: toSafeString(lp),
-        winRate: toSafeString(winRate),
-        games: toSafeString(games),
+        name: summoner.name || displayName,
+        rank,
+        lp: String(lp),
+        winRate: totalGames === "-" ? "-" : `${Math.round((wins / totalGames) * 100)}%`,
+        games: String(totalGames),
         main: "Mid",
         champions: "Ahri / Akali"
       }
-    })
-  };
+    });
+  } catch (err) {
+    return getFallbackLeague(displayName);
+  }
 }
 
 async function getRocketData(qs) {
   const player = qs.player || "Matees_czech";
-  const url = `https://rocketleague.tracker.network/rocket-league/profile/epic/${player}/overview`;
+  const apiKey = process.env.BALLCHASING_API_KEY;
 
-  const res = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0" }
-  });
-  const html = await res.text();
+  if (!apiKey) {
+    return getFallbackRocket(player);
+  }
 
-  const rank = extractFromHtml(html, [
-    /(Unranked|Bronze|Silver|Gold|Platinum|Diamond|Champion|Grand Champion|Supersonic Legend)/i,
-    /"tier":"([A-Za-z ]+)"/i,
-    /"rank":"([A-Za-z ]+)"/i,
-    /\bRank\s*[:=]\s*([A-Za-z ]+)/i
-  ], "Unranked");
-  const mmr = extractFromHtml(html, [/\b(\d{2,})\s*MMR\b/i, /MMR\D+(\d{2,})/i, /\b"mmr"\s*:\s*"?(\d{2,})/i], "-");
-  const wins = extractFromHtml(html, [/\b(\d+)\s*Wins\b/i, /wins\D+(\d+)/i, /\b"wins"\s*:\s*(\d+)/i], "-");
-  const goals = extractFromHtml(html, [/\b(\d+)\s*Goals\b/i, /goals\D+(\d+)/i, /\b"goals"\s*:\s*(\d+)/i], "-");
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      summary: {
-        rank: toSafeString(rank),
-        mmr: toSafeString(mmr),
-        wins: toSafeString(wins),
-        goals: toSafeString(goals),
-        season: "Current",
-        platform: "Epic"
+  try {
+    const url = `https://ballchasing.com/api/replays?player-name=${encodeURIComponent(player)}&sort=-created&count=5`;
+    const res = await fetch(url, {
+      headers: {
+        Authorization: apiKey,
+        "Content-Type": "application/json"
       }
-    })
-  };
+    });
+
+    if (!res.ok) {
+      return getFallbackRocket(player);
+    }
+
+    const payload = await res.json();
+    const replay = (payload.list || payload.replays || [])[0];
+
+    if (!replay) {
+      return getFallbackRocket(player);
+    }
+
+    const playerStats = replay.player_stats || {};
+    const mmr = playerStats.mmr ?? "-";
+    const wins = replay.team_size ? playerStats.wins ?? "-" : "-";
+    const goals = playerStats.goals ?? "-";
+
+    return jsonResponse(200, {
+      summary: {
+        rank: replay.rank || "Unranked",
+        mmr: String(mmr),
+        wins: String(wins),
+        goals: String(goals),
+        season: replay.playlist || "Current",
+        platform: "Ballchasing"
+      }
+    });
+  } catch (err) {
+    return getFallbackRocket(player);
+  }
 }
+
+
+
+
