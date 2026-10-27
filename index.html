@@ -4,683 +4,545 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gamer & Developer Identity Hub</title>
+    <meta
+      name="description"
+      content="Modern dark-mode developer and gamer portfolio with Steam, Discord, GitHub, and League info."
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ink: '#0b1120',
+              panel: '#111827',
+              line: '#1f2937',
+              accent: '#6366f1',
+              mint: '#10b981',
+              sky: '#60a5fa',
+              text: '#e5e7eb'
+            },
+            boxShadow: {
+              glow: '0 0 30px rgba(99, 102, 241, 0.32)'
+            }
+          }
+        }
+      };
+    </script>
     <style>
       :root {
-        --bg: #0b1019;
-        --panel: rgba(17, 25, 36, 0.92);
-        --panel-2: rgba(22, 31, 45, 0.9);
-        --line: rgba(255,255,255,0.08);
-        --muted: #9aa6bf;
-        --text: #edf3ff;
-        --primary: #73f0ff;
-        --purple: #a78bfa;
-        --green: #67f0b3;
-        --gold: #f5d27e;
-        --pink: #f17bdd;
-        --danger: #ff6d7c;
+        --bg: #0b1120;
+        --panel: rgba(15, 23, 42, 0.9);
+        --line: rgba(148, 163, 184, 0.18);
+        --muted: #94a3b8;
+        --text: #e5e7eb;
+        --accent: #6366f1;
+        --mint: #10b981;
       }
 
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
+
       body {
         margin: 0;
-        font-family: Inter, "Segoe UI", sans-serif;
         background:
-          radial-gradient(circle at top left, rgba(167, 139, 250, 0.16), transparent 22%),
-          radial-gradient(circle at top right, rgba(116, 240, 255, 0.12), transparent 22%),
-          linear-gradient(180deg, #070d17 0%, #0d1423 100%);
+          radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 24%),
+          radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 22%),
+          linear-gradient(180deg, #020817 0%, #0b1120 100%);
         color: var(--text);
+        font-family: Inter, "Segoe UI", sans-serif;
       }
 
-      .container {
-        max-width: 1260px;
-        margin: 0 auto;
-        padding: 24px 20px 80px;
-      }
-
-      .header {
-        background: rgba(17, 24, 39, 0.9);
+      .panel {
+        background: rgba(15, 23, 42, 0.86);
         border: 1px solid var(--line);
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 24px 70px rgba(0,0,0,0.42);
+        box-shadow: 0 20px 45px rgba(2, 6, 23, 0.34);
       }
 
       .banner {
-        height: 200px;
-        background:
-          linear-gradient(140deg, rgba(116, 240, 255, 0.2), rgba(167, 139, 250, 0.26)),
-          linear-gradient(180deg, #141c2d, #0c1221);
+        height: 230px;
         position: relative;
+        overflow: hidden;
+        background-image:
+          linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(16, 185, 129, 0.22)),
+          url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
       }
 
-      .banner::before {
+      .banner::after {
         content: "";
         position: absolute;
         inset: 0;
         background-image:
           linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
           linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-        background-size: 28px 28px;
-        mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.35));
-      }
-
-      .profile {
-        padding: 0 24px 20px;
-        margin-top: -42px;
-      }
-
-      .profile-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 20px;
-        flex-wrap: wrap;
-      }
-
-      .profile-left {
-        display: flex;
-        align-items: flex-end;
-        gap: 18px;
+        background-size: 32px 32px;
+        mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
       }
 
       .avatar {
-        width: 120px;
-        height: 120px;
+        width: 118px;
+        height: 118px;
         border-radius: 50%;
-        background: linear-gradient(135deg, rgba(116,240,255,0.9), rgba(167,139,250,0.8));
-        display: grid;
-        place-items: center;
-        border: 4px solid rgba(8,12,20,0.95);
-        box-shadow: 0 16px 42px rgba(116,240,255,0.2);
-        font-size: 3rem;
-        font-weight: 900;
-        color: rgba(255,255,255,0.95);
+        overflow: hidden;
+        border: 4px solid rgba(11, 17, 32, 0.96);
+        box-shadow: 0 18px 30px rgba(99, 102, 241, 0.3);
+        background: linear-gradient(135deg, rgba(99,102,241,0.36), rgba(16,185,129,0.28));
       }
 
-      .title-wrap h1 {
-        margin: 0;
-        font-size: clamp(2.2rem, 3vw, 3.5rem);
-        letter-spacing: -0.08em;
+      .avatar img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
-      .title-wrap .sub {
-        margin-top: 8px;
-        color: var(--muted);
-        font-size: 1.06rem;
-      }
-
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .btn {
-        appearance: none;
-        border: 1px solid transparent;
-        border-radius: 12px;
-        padding: 0.8rem 1rem;
-        font-weight: 800;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-      }
-
-      .btn:hover { transform: translateY(-1px); }
-
-      .btn.primary {
-        background: linear-gradient(135deg, var(--primary), #60b7ff);
-        color: #07131d;
-      }
-
-      .btn.purple {
-        background: rgba(167,139,250,0.12);
-        border-color: rgba(167,139,250,0.35);
-        color: var(--text);
-      }
-
-      .stats-row {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(140px,1fr));
-        gap: 14px;
-        padding: 0 24px 20px;
-      }
-
-      .stat-card {
-        background: rgba(255,255,255,0.02);
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 16px 14px;
-      }
-
-      .stat-label {
-        color: var(--muted);
-        font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-      }
-
-      .stat-value {
-        font-size: clamp(1.5rem, 2vw, 2rem);
-        font-weight: 800;
-        margin-top: 8px;
-        letter-spacing: -0.06em;
-      }
-
-      .main-grid {
-        display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 24px;
-        margin-top: 24px;
-      }
-
-      .stack {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-      }
-
-      .card {
-        background: rgba(17, 24, 39, 0.9);
-        border: 1px solid var(--line);
-        border-radius: 22px;
-        box-shadow: 0 25px 65px rgba(0,0,0,0.35);
-      }
-
-      .card-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        padding: 18px 18px 0;
-      }
-
-      .card-title {
+      .status-pill {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        font-weight: 700;
-        letter-spacing: -0.03em;
-      }
-
-      .tiny-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-      }
-
-      .tiny-dot.steam { background: #6ee7b7; box-shadow: 0 0 16px rgba(110,231,183,0.7); }
-      .tiny-dot.cs2 { background: #7dd3fc; box-shadow: 0 0 16px rgba(125,211,252,0.7); }
-      .tiny-dot.league { background: #d8b4fe; box-shadow: 0 0 16px rgba(216,180,254,0.7); }
-      .tiny-dot.rocket { background: #f9d67a; box-shadow: 0 0 16px rgba(249,214,122,0.7); }
-
-      .pill {
-        border: 1px solid rgba(255,255,255,0.08);
-        background: rgba(255,255,255,0.02);
-        color: var(--muted);
+        justify-content: center;
         border-radius: 999px;
-        padding: 0.35rem 0.65rem;
-        font-size: 0.7rem;
-      }
-
-      .card-body {
-        padding: 18px;
-      }
-
-      .sort-row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 14px;
-      }
-
-      .sort-btn {
-        background: rgba(255,255,255,0.02);
-        border: 1px solid var(--line);
-        color: var(--muted);
-        border-radius: 10px;
-        padding: 0.5rem 0.7rem;
-        font-weight: 700;
-        cursor: pointer;
-      }
-
-      .sort-btn.active {
-        background: rgba(116,240,255,0.08);
-        border-color: rgba(116,240,255,0.42);
-        color: var(--text);
-      }
-
-      .games-list {
-        display: grid;
-        gap: 10px;
-      }
-
-      .game-row {
-        display: grid;
-        grid-template-columns: 50px minmax(150px, 1fr) auto;
-        gap: 12px;
-        align-items: center;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.02);
-      }
-
-      .game-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, rgba(116,240,255,0.5), rgba(167,139,250,0.4));
-        display: grid;
-        place-items: center;
-        font-weight: 800;
-      }
-
-      .game-name {
-        font-weight: 700;
-      }
-
-      .game-meta {
-        margin-top: 3px;
-        color: var(--muted);
-        font-size: 0.74rem;
-      }
-
-      .game-hours {
-        color: var(--muted);
-        font-size: 0.78rem;
-        font-weight: 700;
-      }
-
-      .library-toggle {
-        width: 100%;
-        margin-top: 14px;
-      }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(120px, 1fr));
-        gap: 12px;
-      }
-
-      .mini-box {
-        background: rgba(255,255,255,0.02);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 12px 10px;
-      }
-
-      .mini-box .label {
-        color: var(--muted);
-        font-size: 0.68rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .mini-box .value {
-        margin-top: 8px;
-        font-size: 1.42rem;
-        font-weight: 800;
-      }
-
-      .loading, .error {
-        color: var(--muted);
-      }
-
-      .error {
-        color: var(--danger);
-      }
-
-      .social-list {
-        display: grid;
-        gap: 12px;
-      }
-
-      .social-link {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.02);
-        border-radius: 14px;
-        padding: 12px 14px;
-        color: var(--text);
-        text-decoration: none;
-      }
-
-      .link-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .icon {
-        width: 30px;
-        height: 30px;
-        display: grid;
-        place-items: center;
-        border-radius: 10px;
+        padding: 0.45rem 0.8rem;
         font-size: 0.72rem;
-        font-weight: 800;
+        font-weight: 700;
+        letter-spacing: 0.01em;
       }
 
-      .icon.steam { background: rgba(103,240,179,0.12); color: #b7f6d6; }
-      .icon.discord { background: rgba(136,153,255,0.12); color: #dfe4ff; }
-      .icon.linkedin { background: rgba(96,170,255,0.12); color: #deeeff; }
-      .icon.x { background: rgba(255,255,255,0.1); color: #eef2ff; }
-
-      @media (max-width: 980px) {
-        .main-grid { grid-template-columns: 1fr; }
+      .status-pill.success {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.28);
+        color: #d1fae5;
       }
 
-      @media (max-width: 720px) {
-        .stats-row { grid-template-columns: repeat(2, minmax(130px,1fr)); }
-        .stats-grid { grid-template-columns: repeat(2, minmax(120px,1fr)); }
+      .status-pill.neutral {
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: #dbeafe;
       }
+
+      .steam-button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 0.9rem 1rem;
+        border-radius: 14px;
+        font-weight: 700;
+        background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(99,102,241,0.12));
+        border: 1px solid rgba(99, 102, 241, 0.35);
+        color: #e0e7ff;
+        text-decoration: none;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+
+      .steam-button:hover {
+        transform: translateY(-1px);
+        border-color: rgba(99, 102, 241, 0.6);
+      }
+
+      .copy-success {
+        background: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: #d1fae5;
+      }
+
+      .muted { color: var(--muted); }
+      .thin { font-weight: 500; }
     </style>
   </head>
   <body>
-    <div class="container">
-      <header class="header">
+    <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <header class="panel overflow-hidden rounded-[28px]">
         <div class="banner"></div>
-        <div class="profile">
-          <div class="profile-row">
-            <div class="profile-left">
-              <div class="avatar">M</div>
-              <div class="title-wrap">
-                <h1>Matěj</h1>
-                <div class="sub">Full-Stack Dev by Day, Gamer by Night</div>
+
+        <div class="px-5 pb-6 sm:px-8">
+          <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div class="flex items-end gap-4">
+              <div class="avatar mt-[-42px]">
+                <img
+                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80"
+                  alt="Profile avatar"
+                />
+              </div>
+
+              <div class="pt-2">
+                <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">Matěj Pertl</h1>
+                <p class="mt-1 text-sm text-slate-300">Full-Stack Developer & Gamer</p>
               </div>
             </div>
 
-            <div class="actions">
-              <button class="btn primary" type="button">View GitHub</button>
-              <button class="btn purple" type="button">Add on Steam</button>
-              <button class="btn purple" type="button">View Stats</button>
+            <div class="flex flex-wrap items-center gap-3">
+              <a
+                href="https://github.com/shanceeu"
+                target="_blank"
+                rel="noreferrer"
+                class="rounded-xl bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:bg-indigo-400"
+              >
+                GitHub
+              </a>
+
+              <a
+                href="#steam"
+                class="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-indigo-400"
+              >
+                View Stats
+              </a>
+
+              <a
+                href="#discord"
+                class="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-slate-500"
+              >
+                Discord
+              </a>
             </div>
           </div>
         </div>
 
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-label">Main account</div>
-            <div class="stat-value" id="mainSteamName">—</div>
+        <div class="grid gap-4 px-5 pb-6 sm:grid-cols-2 sm:px-8 xl:grid-cols-4">
+          <div class="rounded-2xl border border-slate-700 bg-slate-900/50 p-4">
+            <div class="text-[10px] uppercase tracking-[0.26em] text-slate-400">Main Account</div>
+            <div class="mt-3 text-2xl font-black text-white">Steam</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Recent games</div>
-            <div class="stat-value" id="recentCount">—</div>
+
+          <div class="rounded-2xl border border-slate-700 bg-slate-900/50 p-4">
+            <div class="text-[10px] uppercase tracking-[0.26em] text-slate-400">Recent Games</div>
+            <div class="mt-3 text-2xl font-black text-white">12+</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Total hours</div>
-            <div class="stat-value" id="totalHours">—</div>
+
+          <div class="rounded-2xl border border-slate-700 bg-slate-900/50 p-4">
+            <div class="text-[10px] uppercase tracking-[0.26em] text-slate-400">Hours Played</div>
+            <div class="mt-3 text-2xl font-black text-white">870h</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">CS2 rating</div>
-            <div class="stat-value" id="cs2Rating">—</div>
+
+          <div class="rounded-2xl border border-slate-700 bg-slate-900/50 p-4">
+            <div class="text-[10px] uppercase tracking-[0.26em] text-slate-400">Focus</div>
+            <div class="mt-3 text-2xl font-black text-white">Dev + Gaming</div>
           </div>
         </div>
       </header>
 
-      <main class="main-grid">
-        <div class="stack">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title"><span class="tiny-dot steam"></span> Steam library</div>
-              <span class="pill">Main + alt accounts</span>
-            </div>
-            <div class="card-body">
-              <div class="sort-row">
-                <button class="sort-btn active" data-sort="recent">Recently played</button>
-                <button class="sort-btn" data-sort="hours">Most hours</button>
-                <button class="sort-btn" data-sort="alpha">Alphabetical</button>
+      <main class="mt-8 grid gap-6 xl:grid-cols-[1.5fr_0.9fr]">
+        <div class="space-y-6">
+          <section id="steam" class="panel rounded-[28px] p-5 sm:p-6">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div class="flex items-center gap-3">
+                <span class="block h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(16,185,129,0.8)]"></span>
+                <h2 class="text-xl font-bold tracking-tight text-white">Steam</h2>
               </div>
-              <div id="steamGames" class="games-list"></div>
-              <button id="toggleLibraryBtn" class="btn purple library-toggle" type="button">
-                View all games in library
-              </button>
+
+              <div class="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-200">
+                Live profile
+              </div>
+            </div>
+
+            <div class="mt-5 grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
+              <div class="space-y-3">
+                <label for="steamAccountSelect" class="block text-[11px] uppercase tracking-[0.25em] text-slate-400">
+                  Account selector
+                </label>
+
+                <select
+                  id="steamAccountSelect"
+                  class="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-indigo-400"
+                >
+                  <option value="main">Main Account</option>
+                  <option value="alt">Alt / Smurf Account</option>
+                  <option value="alt2">Secondary Alt</option>
+                </select>
+
+                <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Steam ID</div>
+                  <div id="steamIdValue" class="mt-2 text-xl font-bold text-white">76561199147369622</div>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Status</div>
+                  <div id="steamStatus" class="status-pill success mt-2">Online</div>
+                </div>
+
+                <a
+                  id="steamProfileLink"
+                  href="https://steamcommunity.com/profiles/76561199147369622"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="steam-button"
+                >
+                  Add on Steam
+                </a>
+              </div>
             </div>
           </section>
 
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title"><span class="tiny-dot cs2"></span> CS2 / Leetify</div>
-              <span class="pill">Live API</span>
+          <section class="panel rounded-[28px] p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="block h-3 w-3 rounded-full bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.8)]"></span>
+                <h2 class="text-xl font-bold tracking-tight text-white">GitHub</h2>
+              </div>
+
+              <a
+                href="https://github.com/shanceeu"
+                target="_blank"
+                rel="noreferrer"
+                class="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-100"
+              >
+                Profile
+              </a>
             </div>
-            <div class="card-body">
-              <div id="cs2Data" class="stats-grid">
-                <div class="loading">Loading CS2 stats…</div>
+
+            <div class="mt-5 grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
+              <div class="space-y-4">
+                <div>
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Top Languages</div>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    <span class="rounded-full border border-slate-700 bg-slate-900/60 px-2.5 py-1 text-xs font-medium text-slate-200">JavaScript</span>
+                    <span class="rounded-full border border-slate-700 bg-slate-900/60 px-2.5 py-1 text-xs font-medium text-slate-200">TypeScript</span>
+                    <span class="rounded-full border border-slate-700 bg-slate-900/60 px-2.5 py-1 text-xs font-medium text-slate-200">Python</span>
+                    <span class="rounded-full border border-slate-700 bg-slate-900/60 px-2.5 py-1 text-xs font-medium text-slate-200">C#</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Recent Activity</div>
+                  <div class="mt-3 space-y-3">
+                    <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-3">
+                      <div class="text-sm font-medium text-slate-100">Building API-driven portfolio dashboards</div>
+                      <div class="mt-1 text-xs text-slate-400">Last 7 days</div>
+                    </div>
+                    <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-3">
+                      <div class="text-sm font-medium text-slate-100">Launching reusable frontend patterns</div>
+                      <div class="mt-1 text-xs text-slate-400">Last 30 days</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Repositories</div>
+                  <div class="mt-3 space-y-2">
+                    <a href="https://github.com/shanceeu/CheapLinkedIn" target="_blank" rel="noreferrer" class="block rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 transition hover:border-indigo-400">
+                      CheapLinkedIn
+                    </a>
+                    <a href="https://github.com/shanceeu/crypto-mine-tycoon" target="_blank" rel="noreferrer" class="block rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 transition hover:border-indigo-400">
+                      Crypto Mine Tycoon
+                    </a>
+                    <a href="https://github.com/shanceeu/crypto-mine-tycoon-2" target="_blank" rel="noreferrer" class="block rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 transition hover:border-indigo-400">
+                      Crypto Mine Tycoon 2
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
 
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title"><span class="tiny-dot league"></span> League of Legends</div>
-              <span class="pill">Tracker.gg</span>
-            </div>
-            <div class="card-body">
-              <div id="leagueData" class="stats-grid">
-                <div class="loading">Loading League stats…</div>
+          <section class="panel rounded-[28px] p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="block h-3 w-3 rounded-full bg-violet-400 shadow-[0_0_16px_rgba(168,85,247,0.8)]"></span>
+                <h2 class="text-xl font-bold tracking-tight text-white">League of Legends</h2>
               </div>
-            </div>
-          </section>
 
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title"><span class="tiny-dot rocket"></span> Rocket League</div>
-              <span class="pill">Tracker.Network</span>
+              <a
+                href="https://www.op.gg/"
+                target="_blank"
+                rel="noreferrer"
+                class="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-100"
+              >
+                OP.GG
+              </a>
             </div>
-            <div class="card-body">
-              <div id="rocketData" class="stats-grid">
-                <div class="loading">Loading Rocket League stats…</div>
+
+            <div class="mt-5 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+              <div class="rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-500/20 to-indigo-500/10 p-5">
+                <div class="text-[11px] uppercase tracking-[0.25em] text-slate-300">Rank</div>
+                <div class="mt-2 text-3xl font-black text-white">Gold III</div>
+                <div class="mt-1 text-sm text-slate-300">NA / Solo Queue</div>
+              </div>
+
+              <div class="space-y-3">
+                <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Main Role</div>
+                  <div class="mt-2 text-lg font-bold text-white">Mid Lane</div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Main Champions</div>
+                  <div class="mt-2 text-lg font-bold text-white">Ahri / Akali</div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Win Rate</div>
+                  <div class="mt-2 text-lg font-bold text-white">56%</div>
+                </div>
               </div>
             </div>
           </section>
         </div>
 
-        <aside class="stack">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title"><span class="tiny-dot steam"></span> Socials</div>
+        <div class="space-y-6">
+          <section id="discord" class="panel rounded-[28px] p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="block h-3 w-3 rounded-full bg-blue-400 shadow-[0_0_16px_rgba(59,130,246,0.8)]"></span>
+                <h2 class="text-xl font-bold tracking-tight text-white">Discord</h2>
+              </div>
             </div>
-            <div class="card-body">
-              <div class="social-list">
-                <a class="social-link" href="https://steamcommunity.com/profiles/76561199147369622" target="_blank">
-                  <span class="link-left"><span class="icon steam">S</span> Steam</span>
-                  <span class="pill">Main</span>
-                </a>
 
-                <a class="social-link" href="https://steamcommunity.com/profiles/76561199113854269/" target="_blank">
-                  <span class="link-left"><span class="icon steam">S</span> Steam alt</span>
-                  <span class="pill">Alt</span>
-                </a>
-
-                <a class="social-link" href="https://steamcommunity.com/profiles/76561199527518684/" target="_blank">
-                  <span class="link-left"><span class="icon steam">S</span> Steam alt 2</span>
-                  <span class="pill">Alt</span>
-                </a>
-
-                <a class="social-link" href="https://discord.com" target="_blank">
-                  <span class="link-left"><span class="icon discord">D</span> Discord</span>
-                  <span class="pill">Online</span>
-                </a>
-
-                <a class="social-link" href="https://linkedin.com" target="_blank">
-                  <span class="link-left"><span class="icon linkedin">in</span> LinkedIn</span>
-                  <span class="pill">Connect</span>
-                </a>
-
-                <a class="social-link" href="https://x.com" target="_blank">
-                  <span class="link-left"><span class="icon x">X</span> X / Twitter</span>
-                  <span class="pill">Follow</span>
-                </a>
+            <div class="mt-5 rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+              <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Username</div>
+              <div class="mt-2 flex items-center justify-between gap-3">
+                <div id="discordTag" class="text-xl font-bold text-white">m4t335_cz3ch</div>
+                <button
+                  id="copyDiscordTag"
+                  type="button"
+                  class="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-100 transition hover:border-indigo-400"
+                >
+                  Copy Tag
+                </button>
               </div>
             </div>
           </section>
-        </aside>
+
+          <section class="panel rounded-[28px] p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="block h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(16,185,129,0.8)]"></span>
+                <h2 class="text-xl font-bold tracking-tight text-white">Featured Projects</h2>
+              </div>
+            </div>
+
+            <div class="mt-5 space-y-4">
+              <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="text-lg font-bold text-white">Portfolio Site</div>
+                  <span class="rounded-full border border-slate-700 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-300">Web</span>
+                </div>
+                <p class="mt-3 text-sm text-slate-300">
+                  A polished personal portfolio built with HTML, Tailwind, and JavaScript for modern product-style storytelling.
+                </p>
+              </div>
+
+              <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="text-lg font-bold text-white">Game Dev Pipeline</div>
+                  <span class="rounded-full border border-slate-700 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-300">Game Dev</span>
+                </div>
+                <p class="mt-3 text-sm text-slate-300">
+                  A modular toolkit for scripting, testing, and rapid prototyping in game development workflows.
+                </p>
+              </div>
+
+              <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="text-lg font-bold text-white">API Integration Layer</div>
+                  <span class="rounded-full border border-slate-700 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-300">Backend</span>
+                </div>
+                <p class="mt-3 text-sm text-slate-300">
+                  Building scalable API services and data visualizations for products, dashboards, and apps.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel rounded-[28px] p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="block h-3 w-3 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.8)]"></span>
+                <h2 class="text-xl font-bold tracking-tight text-white">Gaming Milestones</h2>
+              </div>
+            </div>
+
+            <div class="mt-5 space-y-4">
+              <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div class="text-sm font-semibold text-slate-200">Top 5% Rank</div>
+                <div class="mt-1 text-xs text-slate-400">Competitive leaderboard placement</div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div class="text-sm font-semibold text-slate-200">2.5D Tycoon Dev</div>
+                <div class="mt-1 text-xs text-slate-400">Built and shipped a game project prototype</div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div class="text-sm font-semibold text-slate-200">Cross-Platform Setup</div>
+                <div class="mt-1 text-xs text-slate-400">Game dev, scripting, and tooling across multiple engines</div>
+              </div>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
 
     <script>
-      const API_BASE = "/.netlify/functions/api";
-
-      const state = {
-        sort: "recent",
-        showAll: false,
-        games: []
-      };
-
-      function formatMinutesToHours(minutes) {
-        const hrs = Math.round((Number(minutes) || 0) / 60);
-        return `${hrs.toLocaleString()} hrs`;
-      }
-
-      function sortGames(list, mode) {
-        const copy = [...list];
-        if (mode === "hours") return copy.sort((a, b) => (b.playtime_forever || 0) - (a.playtime_forever || 0));
-        if (mode === "alpha") return copy.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-        return copy.sort((a, b) => (b.rtime || 0) - (a.rtime || 0));
-      }
-
-      function renderSteamGames() {
-        const el = document.getElementById("steamGames");
-        const visible = state.showAll ? state.games : state.games.slice(0, 12);
-        const sorted = sortGames(visible, state.sort);
-
-        if (!sorted.length) {
-          el.innerHTML = `<div class="loading">No Steam data loaded.</div>`;
-          return;
+      const steamAccounts = [
+        {
+          value: 'main',
+          label: 'Main Account',
+          steamId: '76561199147369622',
+          status: 'Online',
+          profileUrl: 'https://steamcommunity.com/profiles/76561199147369622',
+          buttonText: 'Add on Steam'
+        },
+        {
+          value: 'alt',
+          label: 'Alt / Smurf Account',
+          steamId: '76561199113854269',
+          status: 'Away',
+          profileUrl: 'https://steamcommunity.com/profiles/76561199113854269',
+          buttonText: 'Add Alt on Steam'
+        },
+        {
+          value: 'alt2',
+          label: 'Secondary Alt',
+          steamId: '76561199527518684',
+          status: 'Offline',
+          profileUrl: 'https://steamcommunity.com/profiles/76561199527518684',
+          buttonText: 'Add Alt on Steam'
         }
+      ];
 
-        el.innerHTML = sorted.map(game => {
-          const short = (game.name || "G").slice(0, 1).toUpperCase();
-          return `
-            <div class="game-row">
-              <div class="game-icon">${short}</div>
-              <div>
-                <div class="game-name">${game.name || "Unknown Game"}</div>
-                <div class="game-meta">${game.platform || "Steam"} • ${game.rtime ? "Recently played" : "Library"}</div>
-              </div>
-              <div class="game-hours">${game.playtime_forever ? formatMinutesToHours(game.playtime_forever) : "N/A"}</div>
-            </div>
-          `;
-        }).join("");
+      const steamSelect = document.getElementById('steamAccountSelect');
+      const steamIdValue = document.getElementById('steamIdValue');
+      const steamStatus = document.getElementById('steamStatus');
+      const steamProfileLink = document.getElementById('steamProfileLink');
+
+      function updateSteamAccount() {
+        const selected = steamAccounts.find((account) => account.value === steamSelect.value) || steamAccounts[0];
+
+        steamIdValue.textContent = selected.steamId;
+        steamStatus.textContent = selected.status;
+        steamStatus.classList.remove('success', 'neutral');
+        steamStatus.classList.add(selected.status === 'Offline' ? 'neutral' : 'success');
+        steamProfileLink.href = selected.profileUrl;
+        steamProfileLink.textContent = selected.buttonText;
       }
 
-      function showSteamMissing() {
-        document.getElementById("steamGames").innerHTML = '<div class="error">Steam API key is not configured in Netlify yet.</div>';
-        document.getElementById("mainSteamName").textContent = 'Steam';
-        document.getElementById("recentCount").textContent = '0';
-        document.getElementById("totalHours").textContent = '0 hrs';
-      }
+      steamSelect.addEventListener('change', updateSteamAccount);
+      updateSteamAccount();
 
-      async function loadSteam() {
+      const copyDiscordButton = document.getElementById('copyDiscordTag');
+      copyDiscordButton.addEventListener('click', async () => {
+        const tag = 'm4t335_cz3ch';
+
         try {
-          const res = await fetch(`${API_BASE}?type=steam&accounts=76561199147369622,76561199113854269,76561199527518684`);
-          const data = await res.json();
-
-          if (!data || !data.games) {
-            showSteamMissing();
-            return;
-          }
-
-          state.games = Array.isArray(data.games) ? data.games : [];
-          document.getElementById("mainSteamName").textContent = data.mainName || "Main account";
-          document.getElementById("recentCount").textContent = data.recentCount || "0";
-          document.getElementById("totalHours").textContent = data.totalHours ? `${data.totalHours} hrs` : "0 hrs";
-
-          if (!state.games.length) {
-            document.getElementById("steamGames").innerHTML = '<div class="error">No games returned for your Steam accounts yet.</div>';
-            return;
-          }
-
-          renderSteamGames();
-        } catch (err) {
-          console.error(err);
-          showSteamMissing();
+          await navigator.clipboard.writeText(tag);
+          copyDiscordButton.textContent = 'Copied!';
+          copyDiscordButton.classList.add('copy-success');
+          setTimeout(() => {
+            copyDiscordButton.textContent = 'Copy Tag';
+            copyDiscordButton.classList.remove('copy-success');
+          }, 1200);
+        } catch (error) {
+          copyDiscordButton.textContent = 'Failed';
+          setTimeout(() => {
+            copyDiscordButton.textContent = 'Copy Tag';
+          }, 1200);
         }
-      }
-
-      async function loadLeetify() {
-        try {
-          const res = await fetch(`${API_BASE}?type=leetify&steamId=76561199147369622`);
-          const data = await res.json();
-          const stats = data.stats || {};
-          document.getElementById("cs2Rating").textContent = stats.rating || "-";
-          document.getElementById("cs2Data").innerHTML = `
-            <div class="mini-box"><div class="label">KD</div><div class="value">${stats.kd ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">HS%</div><div class="value">${stats.headshot ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Win %</div><div class="value">${stats.winRate ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Matches</div><div class="value">${stats.matches ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Rating</div><div class="value">${stats.rating ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Rank</div><div class="value">${stats.rank ?? "-"}</div></div>
-          `;
-        } catch (err) {
-          console.error(err);
-          document.getElementById("cs2Data").innerHTML = `<div class="error">Unable to load CS2 stats.</div>`;
-        }
-      }
-
-      async function loadLeague() {
-        try {
-          const res = await fetch(`${API_BASE}?type=lol&username=Sm1ted%23Diff`);
-          const data = await res.json();
-          const s = data.summary || {};
-          document.getElementById("leagueData").innerHTML = `
-            <div class="mini-box"><div class="label">Name</div><div class="value">${s.name ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Rank</div><div class="value">${s.rank ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">LP</div><div class="value">${s.lp ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Win %</div><div class="value">${s.winRate ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Games</div><div class="value">${s.games ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Main</div><div class="value">${s.main ?? "-"}</div></div>
-          `;
-        } catch (err) {
-          console.error(err);
-          document.getElementById("leagueData").innerHTML = `<div class="error">Unable to load League stats.</div>`;
-        }
-      }
-
-      async function loadRocket() {
-        try {
-          const res = await fetch(`${API_BASE}?type=rocket&player=Matees_czech`);
-          const data = await res.json();
-          const s = data.summary || {};
-          document.getElementById("rocketData").innerHTML = `
-            <div class="mini-box"><div class="label">Rank</div><div class="value">${s.rank ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">MMR</div><div class="value">${s.mmr ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Wins</div><div class="value">${s.wins ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Goals</div><div class="value">${s.goals ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Season</div><div class="value">${s.season ?? "-"}</div></div>
-            <div class="mini-box"><div class="label">Platform</div><div class="value">${s.platform ?? "-"}</div></div>
-          `;
-        } catch (err) {
-          console.error(err);
-          document.getElementById("rocketData").innerHTML = `<div class="error">Unable to load Rocket League stats.</div>`;
-        }
-      }
-
-      document.querySelectorAll(".sort-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          state.sort = btn.dataset.sort;
-          renderSteamGames();
-        });
       });
-
-      document.getElementById("toggleLibraryBtn").addEventListener("click", () => {
-        state.showAll = !state.showAll;
-        const btn = document.getElementById("toggleLibraryBtn");
-        btn.textContent = state.showAll ? "Show first 12 games" : "View all games in library";
-        renderSteamGames();
-      });
-
-      loadSteam();
-      loadLeetify();
-      loadLeague();
-      loadRocket();
     </script>
   </body>
 </html>
