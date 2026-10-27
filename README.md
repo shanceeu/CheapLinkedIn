@@ -2,6 +2,8 @@
 
 A redesigned portfolio with selected GitHub repositories, Discord contact, three Steam profiles, and game stats for CS2, League of Legends, and Rocket League. It deploys as a static site with Netlify Functions. API keys remain server-side.
 
+The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress, navigation, and identity artwork. Motion is reduced when the visitor requests it. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
+
 ## Features carried over from the original site
 
 - Matěj's profile, GitHub link, working languages and project links.
