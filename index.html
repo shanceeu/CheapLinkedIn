@@ -492,7 +492,7 @@
                   <span class="pill">Main</span>
                 </a>
 
-                <a class="social-link" href="http://steamcommunity.com/profiles/76561199113854269/" target="_blank">
+                <a class="social-link" href="https://steamcommunity.com/profiles/76561199113854269/" target="_blank">
                   <span class="link-left"><span class="icon steam">S</span> Steam alt</span>
                   <span class="pill">Alt</span>
                 </a>
@@ -569,25 +569,37 @@
         }).join("");
       }
 
+      function showSteamMissing() {
+        document.getElementById("steamGames").innerHTML = '<div class="error">Steam API key is not configured in Netlify yet.</div>';
+        document.getElementById("mainSteamName").textContent = 'Steam';
+        document.getElementById("recentCount").textContent = '0';
+        document.getElementById("totalHours").textContent = '0 hrs';
+      }
+
       async function loadSteam() {
         try {
           const res = await fetch(`${API_BASE}?type=steam&accounts=76561199147369622,76561199113854269,76561199527518684`);
           const data = await res.json();
 
           if (!data || !data.games) {
-            document.getElementById("steamGames").innerHTML = `<div class="error">Steam data unavailable.</div>`;
+            showSteamMissing();
             return;
           }
 
-          state.games = data.games || [];
+          state.games = Array.isArray(data.games) ? data.games : [];
           document.getElementById("mainSteamName").textContent = data.mainName || "Main account";
           document.getElementById("recentCount").textContent = data.recentCount || "0";
           document.getElementById("totalHours").textContent = data.totalHours ? `${data.totalHours} hrs` : "0 hrs";
 
+          if (!state.games.length) {
+            document.getElementById("steamGames").innerHTML = '<div class="error">No games returned for your Steam accounts yet.</div>';
+            return;
+          }
+
           renderSteamGames();
         } catch (err) {
           console.error(err);
-          document.getElementById("steamGames").innerHTML = `<div class="error">Steam API failed.</div>`;
+          showSteamMissing();
         }
       }
 

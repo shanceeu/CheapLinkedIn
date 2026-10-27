@@ -32,7 +32,8 @@ function pickFirstValue(obj, keys) {
 function normalizeMetric(value) {
   if (value === undefined || value === null || value === "") return "-";
   const str = String(value).trim();
-  return str.replace(/^[^\d]*/, "").replace(/[^\d.%]+$/, "") || str;
+  const cleaned = str.replace(/^[^\d]*/, "").replace(/[^\d.%]+$/, "");
+  return cleaned || str;
 }
 
 function toSafeString(value) {
@@ -71,7 +72,7 @@ async function getSteamData(qs) {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        mainName: "Main account",
+        mainName: "Steam",
         recentCount: 0,
         totalHours: 0,
         games: []
@@ -89,7 +90,7 @@ async function getSteamData(qs) {
   const seen = new Map();
   let recentCount = 0;
   let totalHours = 0;
-  let mainName = "Main account";
+  let mainName = "Steam";
 
   for (const account of accounts) {
     const profileUrl = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamApiKey}&steamids=${account}`;
@@ -97,8 +98,8 @@ async function getSteamData(qs) {
     const profileJson = await profileRes.json();
     const player = profileJson.response?.players?.[0];
 
-    if (player && mainName === "Main account") {
-      mainName = player.personaname || "Main account";
+    if (player && mainName === "Steam") {
+      mainName = player.personaname || "Steam";
     }
 
     const ownedUrl = `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${steamApiKey}&steamid=${account}&include_appinfo=true&include_played_free_games=true`;
