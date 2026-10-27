@@ -11,8 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
+  <script type="module" src="/storm.mjs"></script>
 </head>
 <body>
+  <canvas id="crowstorm" aria-hidden="true"></canvas>
   <div class="scroll-progress" aria-hidden="true"></div>
   <div class="site-shell" id="top">
     <header class="site-header">
@@ -62,7 +64,7 @@
         <div class="section-heading"><h2 id="steam-title">The game<br><em>library.</em></h2><p>Three accounts, one searchable shelf.</p></div>
         <div class="steam-layout">
           <div class="steam-aside"><label for="steam-profile">Choose a Steam account</label><select id="steam-profile"><option value="76561199147369622">Main account</option><option value="76561199113854269">Alt account</option><option value="76561199527518684">Secondary account</option></select><div class="steam-identity"><span class="small-label">Selected Steam ID</span><strong id="steam-id">76561199147369622</strong><span id="steam-status" class="steam-status">Status requires Steam API key</span></div><a id="steam-link" class="button button-dark arrow-link" href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer">Open Steam profile</a><p class="steam-aside-note">Game libraries appear when their Steam game details are public and a Steam API key is configured.</p></div>
-          <div class="steam-main"><div class="steam-toolbar"><div><strong id="steam-count">Steam libraries</strong><span>Sorted by recent activity, then playtime</span></div><label class="search-wrap" for="steam-search"><span class="visually-hidden">Find a game</span><input id="steam-search" type="search" placeholder="Find a game" disabled></label></div><div id="steam-content" aria-live="polite"><p class="pending">Loading games…</p></div></div>
+          <div class="steam-main"><div class="steam-toolbar"><div><strong id="steam-count">Steam libraries</strong><span>Browse by last played date, total hours, or name.</span></div><div class="steam-controls"><label class="sort-wrap" for="steam-sort"><span>Sort games</span><select id="steam-sort" disabled><option value="recent">Recently played</option><option value="playtime">Time played</option><option value="alphabetical">Alphabetical</option></select></label><label class="search-wrap" for="steam-search"><span class="visually-hidden">Find a game</span><input id="steam-search" type="search" placeholder="Find a game" disabled></label></div></div><div id="steam-content" aria-live="polite"><p class="pending">Loading games…</p></div></div>
         </div>
       </section>
 

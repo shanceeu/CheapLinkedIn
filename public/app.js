@@ -1,3 +1,5 @@
+import { sortGames } from "./sort.mjs";
+
 const $ = selector => document.querySelector(selector);
 const create = (tag, className = "", value) => {
   const node = document.createElement(tag);
@@ -7,6 +9,7 @@ const create = (tag, className = "", value) => {
 };
 const fmt = value => value === null || value === undefined ? "—" : new Intl.NumberFormat("en").format(value);
 const pct = value => value === null || value === undefined ? "—" : `${Math.round(value * 100)}%`;
+const decimal = (value, digits = 1, suffix = "") => value === null || value === undefined ? "—" : `${value.toFixed(digits)}${suffix}`;
 const shortDate = value => {
   if (!value) return "";
   const parsed = new Date(value);
@@ -56,15 +59,50 @@ function matchList(items, label) {
   return root;
 }
 
+let leetifyView = "overview";
 function renderLeetify(data) {
   const root = $('[data-content="leetify"]');
   if (data.state !== "ready") return stateMessage(root, data);
   const content = document.createDocumentFragment();
   content.append(create("p", "player-name", data.name));
-  content.append(metrics([["Premier rating", fmt(data.rank)], ["Win rate", pct(data.winRate)], ["Tracked matches", fmt(data.matches)]]));
+  const switcher = create("div", "stat-switch");
+  switcher.setAttribute("role", "group");
+  switcher.setAttribute("aria-label", "Choose CS2 stats");
+  for (const [view, label] of [["overview", "Overview"], ["aim", "Aim"], ["utility", "Utility"], ["duels", "Duels"]]) {
+    const button = create("button", "", label);
+    button.type = "button";
+    button.dataset.view = view;
+    button.setAttribute("aria-pressed", String(leetifyView === view));
+    button.addEventListener("click", () => {
+      leetifyView = view;
+      renderLeetify(data);
+      root.querySelector(`.stat-switch [data-view="${view}"]`)?.focus();
+    });
+    switcher.append(button);
+  }
+  content.append(switcher);
+  const p = data.performance || {};
   const detail = create("div", "detail-line");
-  detail.append(create("span", "", "Leetify rating"), create("strong", "", data.rating === null ? "—" : data.rating.toFixed(1)));
-  detail.append(create("span", "", "Aim rating"), create("strong", "", data.aim === null ? "—" : data.aim.toFixed(1)));
+  const addDetail = (label, value) => detail.append(create("span", "", label), create("strong", "", value));
+  if (leetifyView === "aim") {
+    content.append(metrics([["Aim rating", decimal(data.aim)], ["Positioning", decimal(p.positioning)], ["Reaction time", decimal(p.reactionTime, 0, " ms")]]));
+    addDetail("Head accuracy", decimal(p.headAccuracy, 1, "%"));
+    addDetail("Spray accuracy", decimal(p.sprayAccuracy, 1, "%"));
+    addDetail("Good counter-strafe shots", decimal(p.counterStrafing, 1, "%"));
+    addDetail("Pre-aim", decimal(p.preaim));
+  } else if (leetifyView === "utility") {
+    content.append(metrics([["Utility rating", decimal(p.utility)], ["Enemies flashed / flash", decimal(p.enemiesFlashed, 2)], ["HE damage / grenade", decimal(p.heDamage)]]));
+    addDetail("Enemy flash duration", decimal(p.flashDuration, 2, " s"));
+    addDetail("Trade kill success", decimal(p.tradeSuccess, 1, "%"));
+  } else if (leetifyView === "duels") {
+    content.append(metrics([["Opening rating", decimal(p.opening, 2)], ["Clutch rating", decimal(p.clutch, 2)], ["Leetify rating", decimal(data.rating)]]));
+    addDetail("CT opening duels won", decimal(p.ctOpeningDuel, 1, "%"));
+    addDetail("T opening duels won", decimal(p.tOpeningDuel, 1, "%"));
+  } else {
+    content.append(metrics([["Premier rating", fmt(data.rank)], ["Win rate", pct(data.winRate)], ["Tracked matches", fmt(data.matches)]]));
+    addDetail("Leetify rating", decimal(data.rating));
+    addDetail("Aim rating", decimal(data.aim));
+  }
   content.append(detail, matchList(data.recent, item => item.map));
   root.replaceChildren(content);
 }
@@ -119,7 +157,7 @@ function renderGames() {
   const root = $("#steam-content");
   const library = libraries.find(item => item.id === $("#steam-profile").value);
   const query = $("#steam-search").value.trim().toLowerCase();
-  const games = (library?.games || []).filter(game => game.name.toLowerCase().includes(query));
+  const games = sortGames((library?.games || []).filter(game => game.name.toLowerCase().includes(query)), $("#steam-sort").value);
   if (!games.length) {
     root.replaceChildren(create("p", "empty", query ? "No games match that search." : "This profile has no visible game details."));
     return;
@@ -139,7 +177,9 @@ function renderGames() {
       row.append(icon);
     } else row.append(create("span", "game-icon"));
     const name = create("span", "game-name");
-    name.append(create("strong", "", game.name), create("small", "", `${fmt(game.recentHours)} h in last 2 weeks`));
+    const playedDate = game.lastPlayed ? new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" }).format(game.lastPlayed * 1000) : null;
+    const activity = playedDate ? `Last played ${playedDate} · ${fmt(game.recentHours)} h in last 2 weeks` : `${fmt(game.recentHours)} h in last 2 weeks`;
+    name.append(create("strong", "", game.name), create("small", "", activity));
     row.append(name, create("span", "game-hours", `${fmt(game.hours)} h`));
     list.append(row);
   }
@@ -159,6 +199,7 @@ function renderSteam(data) {
     steamReady = false;
     libraries = [];
     $("#steam-search").disabled = true;
+    $("#steam-sort").disabled = true;
     stateMessage(root, data);
     const links = create("div", "profile-links");
     for (const id of data.ids || accounts) {
@@ -176,6 +217,7 @@ function renderSteam(data) {
   libraries = data.libraries;
   steamReady = true;
   $("#steam-search").disabled = false;
+  $("#steam-sort").disabled = false;
   for (const option of $("#steam-profile").options) {
     const library = libraries.find(item => item.id === option.value);
     if (library) option.textContent = library.name;
@@ -204,6 +246,7 @@ async function refresh() {
 $("#refresh").addEventListener("click", refresh);
 $("#steam-profile").addEventListener("change", updateSteamAccount);
 $("#steam-search").addEventListener("input", () => { visibleGames = 12; renderGames(); });
+$("#steam-sort").addEventListener("change", () => { visibleGames = 12; renderGames(); });
 $("#copyDiscordTag").addEventListener("click", async () => {
   const status = $("#copy-status");
   try {

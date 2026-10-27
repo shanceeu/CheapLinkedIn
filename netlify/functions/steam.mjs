@@ -18,6 +18,7 @@ export function shapeSteam(id, data, profile = {}) {
       name: game.name || `App ${game.appid}`,
       hours: Math.round((game.playtime_forever || 0) / 60 * 10) / 10,
       recentHours: Math.round((game.playtime_2weeks || 0) / 60 * 10) / 10,
+      lastPlayed: Number.isFinite(game.rtime_last_played) && game.rtime_last_played > 0 ? game.rtime_last_played : null,
       icon: game.img_icon_url ? `https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg` : null,
     })).sort((a, b) => b.recentHours - a.recentHours || b.hours - a.hours),
   };

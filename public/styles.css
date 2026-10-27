@@ -255,3 +255,47 @@ footer a { color: var(--cream); }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
   .identity-orbit, .identity-letter { transform: none; }
 }
+
+/* Crowstorm atmosphere sits behind the content and never receives input. */
+#crowstorm { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: .9; }
+.site-shell { position: relative; z-index: 1; }
+.games-section { background: rgba(31, 11, 17, .72); }
+.contact-section { background: rgba(27, 10, 15, .88); }
+.games-section .games-list { display: grid; gap: 18px; border: 0; }
+.game-panel { border: 1px solid rgba(247, 235, 228, .13); border-radius: 30px; padding: 28px 30px 34px; min-height: 370px; background: linear-gradient(135deg, rgba(112, 39, 49, .51), rgba(38, 14, 20, .8)); box-shadow: 12px 18px 36px rgba(12, 4, 8, .16); }
+.game-panel.is-current { border-color: rgba(240, 170, 162, .45); }
+.game-panel h3 { margin-top: 25px; }
+.game-data { margin-top: 30px; }
+.steam-layout { overflow: hidden; border: 1px solid var(--line-soft); border-radius: 30px; background: rgba(94, 31, 40, .44); box-shadow: 12px 22px 46px rgba(12, 4, 8, .15); }
+.steam-aside { padding-left: 30px; }
+.steam-main { padding-right: 30px; }
+.stat-switch { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 24px; padding: 4px; border: 1px solid var(--line-soft); border-radius: 99px; background: rgba(10, 5, 9, .2); width: fit-content; max-width: 100%; }
+.stat-switch button { border: 0; border-radius: 99px; padding: 8px 12px; background: none; color: var(--muted); font-size: 11px; font-weight: 700; transition: background .2s, color .2s; }
+.stat-switch button:hover { color: var(--cream); }
+.stat-switch button[aria-pressed="true"] { color: var(--wine-dark); background: var(--rose); }
+.stat-switch button:focus-visible { outline-offset: 2px; }
+.steam-controls { display: flex; align-items: end; gap: 18px; }
+.sort-wrap { display: flex; flex-direction: column; gap: 5px; color: var(--muted); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.sort-wrap select { min-width: 160px; padding: 9px 28px 9px 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--cream); background: var(--wine-deep); font-size: 12px; font-weight: 600; }
+.sort-wrap select:disabled { opacity: .55; }
+.sort-wrap option { color: var(--cream); background: var(--wine-deep); }
+.steam-toolbar { align-items: center; }
+
+@media (max-width: 760px) {
+  .game-panel { padding: 25px 23px 32px; }
+  .game-data { margin-top: 25px; }
+  .steam-aside { padding-left: 24px; padding-right: 24px; }
+  .steam-main { padding-left: 24px; padding-right: 24px; }
+  .steam-controls { justify-content: space-between; margin-top: 20px; }
+}
+
+@media (max-width: 480px) {
+  .game-panel { padding: 23px 19px 27px; border-radius: 24px; }
+  .game-panel h3 { font-size: clamp(2.8rem, 12vw, 4rem); }
+  .stat-switch { gap: 2px; }
+  .stat-switch button { padding: 7px 9px; font-size: 10px; }
+  .steam-layout { border-radius: 24px; }
+  .steam-aside, .steam-main { padding-left: 19px; padding-right: 19px; }
+  .steam-controls { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .sort-wrap select, .search-wrap input { width: 100%; }
+}
