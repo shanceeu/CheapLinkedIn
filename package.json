@@ -1,12 +1,10 @@
 {
-  "name": "gamer-dev-identity-hub",
-  "version": "1.0.0",
+  "name": "cheaplinkedin",
+  "version": "2.0.0",
   "private": true,
-  "description": "Dark gaming and developer portfolio with live Steam, CS2, League, and Rocket stats",
+  "description": "Matěj Pertl's developer portfolio and game stats dashboard",
   "scripts": {
-    "start": "node netlify/functions/api.js"
-  },
-  "dependencies": {
-    "node-fetch": "^2.6.11"
+    "dev": "netlify dev",
+    "test": "node --test --test-isolation=none tests/trackers.test.mjs"
   }
 }
