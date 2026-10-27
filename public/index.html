@@ -3,71 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f2f0e9">
+  <meta name="theme-color" content="#58181F">
   <meta name="description" content="Matěj Pertl — developer, gamer, projects and live game stats.">
   <title>Matěj Pertl — Developer & Gamer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
 </head>
 <body>
+  <div class="scroll-progress" aria-hidden="true"></div>
   <div class="site-shell" id="top">
     <header class="site-header">
-      <a class="wordmark" href="#top" aria-label="Matěj Pertl, top of page"><span class="mark" aria-hidden="true">MP</span><span>MATĚJ PERTL</span></a>
+      <a class="wordmark" href="#top" aria-label="Matěj Pertl, top of page"><span class="wordmark-dot" aria-hidden="true"></span>Matěj Pertl</a>
       <nav aria-label="Primary navigation"><a href="#work">Work</a><a href="#games">Games</a><a href="#steam">Steam</a><a href="#contact">Contact</a></nav>
-      <a class="header-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      <a class="header-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">GitHub</a>
     </header>
 
     <main>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <h1 id="hero-title">Build things.<br><span>Play hard.</span></h1>
-          <p>Full-stack developer and gamer. Code, projects, ranked climbs and the games in rotation—all in one place.</p>
-          <div class="hero-actions"><a class="button button-primary" href="#work">Explore my work <span aria-hidden="true">↗</span></a><a class="button button-plain" href="#games">See game stats <span aria-hidden="true">↓</span></a></div>
+          <h1 id="hero-title">Built for code.<br><em>Made for play.</em></h1>
+          <p>Full-stack developer and gamer. Projects, ranked climbs, and the games in rotation, all in one place.</p>
+          <div class="hero-actions"><a class="button button-primary arrow-link" href="#work">Explore my work</a><a class="button button-plain arrow-link" href="#games">See game stats</a></div>
         </div>
-        <aside class="identity-card" aria-label="Profile links">
-          <div class="identity-top"><span class="identity-label">Developer / player</span><span class="identity-cross" aria-hidden="true">✳</span></div>
-          <div class="identity-monogram" aria-hidden="true">M<span>.</span></div>
-          <div class="identity-bottom"><div><strong>Matěj Pertl</strong><span>Full-stack developer & gamer</span></div><a href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer" aria-label="Open Matěj's GitHub profile">↗</a></div>
-        </aside>
+        <div class="identity-visual" aria-hidden="true">
+          <div class="identity-orbit"><span class="orbit-line orbit-line-one"></span><span class="orbit-line orbit-line-two"></span><span class="identity-letter">M</span><span class="orbit-dot"></span></div>
+          <span class="identity-caption">Developer / player</span>
+        </div>
+        <div class="hero-foot"><span>Matěj Pertl</span><span>Code and games, side by side</span></div>
       </section>
 
       <section class="work-section section-block" id="work" aria-labelledby="work-title">
-        <div class="section-heading"><div><span class="section-index">Work</span><h2 id="work-title">What I’m building</h2></div><p>Projects and code from my GitHub profile.</p></div>
+        <div class="section-heading"><h2 id="work-title">What I’m<br><em>building.</em></h2><p>Projects and code from my GitHub profile.</p></div>
         <div class="work-layout">
-          <div class="work-lead"><span class="small-label">Working languages</span><div class="language-list"><span>JavaScript</span><span>TypeScript</span><span>Python</span><span>C#</span></div><a class="inline-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">See GitHub profile <span aria-hidden="true">↗</span></a></div>
+          <div class="work-lead"><p class="small-label">Working languages</p><div class="language-list"><span>JavaScript</span><span>TypeScript</span><span>Python</span><span>C#</span></div><a class="inline-link arrow-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">See GitHub profile</a></div>
           <div class="repo-list" aria-label="Selected repositories">
-            <a href="https://github.com/shanceeu/CheapLinkedIn" target="_blank" rel="noopener noreferrer"><span class="repo-no">01</span><span class="repo-name">CheapLinkedIn<small>This portfolio</small></span><span class="repo-arrow" aria-hidden="true">↗</span></a>
-            <a href="https://github.com/shanceeu/crypto-mine-tycoon" target="_blank" rel="noopener noreferrer"><span class="repo-no">02</span><span class="repo-name">Crypto Mine Tycoon<small>Game project</small></span><span class="repo-arrow" aria-hidden="true">↗</span></a>
-            <a href="https://github.com/shanceeu/crypto-mine-tycoon-2" target="_blank" rel="noopener noreferrer"><span class="repo-no">03</span><span class="repo-name">Crypto Mine Tycoon 2<small>Game project</small></span><span class="repo-arrow" aria-hidden="true">↗</span></a>
-            <a href="https://github.com/shanceeu/gamer-dev-identity-hub" target="_blank" rel="noopener noreferrer"><span class="repo-no">04</span><span class="repo-name">Game Stats Hub<small>Live stats dashboard</small></span><span class="repo-arrow" aria-hidden="true">↗</span></a>
+            <a class="arrow-link" href="https://github.com/shanceeu/CheapLinkedIn" target="_blank" rel="noopener noreferrer"><span class="repo-name">CheapLinkedIn<small>This portfolio</small></span></a>
+            <a class="arrow-link" href="https://github.com/shanceeu/crypto-mine-tycoon" target="_blank" rel="noopener noreferrer"><span class="repo-name">Crypto Mine Tycoon<small>Game project</small></span></a>
+            <a class="arrow-link" href="https://github.com/shanceeu/crypto-mine-tycoon-2" target="_blank" rel="noopener noreferrer"><span class="repo-name">Crypto Mine Tycoon 2<small>Game project</small></span></a>
+            <a class="arrow-link" href="https://github.com/shanceeu/gamer-dev-identity-hub" target="_blank" rel="noopener noreferrer"><span class="repo-name">Game Stats Hub<small>Live stats dashboard</small></span></a>
           </div>
         </div>
       </section>
 
       <section class="games-section section-block" id="games" aria-labelledby="games-title">
-        <div class="section-heading"><div><span class="section-index">Games</span><h2 id="games-title">The scoreboard</h2></div><div class="refresh-group"><span id="updated" role="status">Checking providers…</span><button id="refresh" type="button" class="refresh-button">Refresh stats <span aria-hidden="true">↻</span></button></div></div>
-        <p class="section-intro">Three games, three different views of progress. Each panel links to the full player profile.</p>
-        <div class="games-grid">
-          <article class="game-panel game-cs" aria-labelledby="cs-title"><div class="game-top"><span class="game-code">CS / 02</span><a href="https://leetify.com/app/profile/76561199147369622" target="_blank" rel="noopener noreferrer">Leetify profile ↗</a></div><h3 id="cs-title">Counter-Strike 2</h3><p class="game-subtitle">Aim, matches and Premier rating via Leetify.</p><div data-content="leetify" class="game-data" aria-live="polite"><p class="pending">Loading Leetify…</p></div></article>
-          <article class="game-panel game-league" aria-labelledby="league-title"><div class="game-top"><span class="game-code">LOL / EUNE</span><span class="game-links"><a href="https://www.op.gg/summoners/eune/Sm1ted-Diff" target="_blank" rel="noopener noreferrer">OP.GG ↗</a><a href="https://tracker.gg/lol/profile/riot/Sm1ted%23Diff/overview" target="_blank" rel="noopener noreferrer">Tracker ↗</a></span></div><h3 id="league-title">League of Legends</h3><p class="game-subtitle">Solo queue rank and recent matches for Sm1ted#Diff.</p><div data-content="league" class="game-data" aria-live="polite"><p class="pending">Loading Riot data…</p></div></article>
-          <article class="game-panel game-rocket" aria-labelledby="rocket-title"><div class="game-top"><span class="game-code">RL / EPIC</span><a href="https://rocketleague.tracker.network/rocket-league/profile/epic/Matees_czech/overview" target="_blank" rel="noopener noreferrer">Live profile ↗</a></div><h3 id="rocket-title">Rocket League</h3><p class="game-subtitle">Live profile and optional uploaded replay stats.</p><div data-content="rocket" class="game-data" aria-live="polite"><p class="pending">Loading replays…</p></div></article>
+        <div class="section-heading"><h2 id="games-title">The<br><em>scoreboard.</em></h2><div class="refresh-group"><span id="updated" role="status">Checking providers…</span><button id="refresh" type="button" class="refresh-button">Refresh stats</button></div></div>
+        <p class="section-intro">Three games, three views of progress. Open any player profile for the full picture.</p>
+        <div class="games-list">
+          <article class="game-panel game-cs" aria-labelledby="cs-title"><div class="game-top"><span class="game-code">Counter-Strike 2</span><a class="arrow-link" href="https://leetify.com/app/profile/76561199147369622" target="_blank" rel="noopener noreferrer">Leetify profile</a></div><h3 id="cs-title">Counter-Strike<br><em>2.</em></h3><p class="game-subtitle">Aim, matches and Premier rating via Leetify.</p><div data-content="leetify" class="game-data" aria-live="polite"><p class="pending">Loading Leetify…</p></div></article>
+          <article class="game-panel game-league" aria-labelledby="league-title"><div class="game-top"><span class="game-code">League of Legends / EUNE</span><span class="game-links"><a class="arrow-link" href="https://www.op.gg/summoners/eune/Sm1ted-Diff" target="_blank" rel="noopener noreferrer">OP.GG</a><a class="arrow-link" href="https://tracker.gg/lol/profile/riot/Sm1ted%23Diff/overview" target="_blank" rel="noopener noreferrer">Tracker</a></span></div><h3 id="league-title">League of<br><em>Legends.</em></h3><p class="game-subtitle">Solo queue rank and recent matches for Sm1ted#Diff.</p><div data-content="league" class="game-data" aria-live="polite"><p class="pending">Loading Riot data…</p></div></article>
+          <article class="game-panel game-rocket" aria-labelledby="rocket-title"><div class="game-top"><span class="game-code">Rocket League / Epic</span><a class="arrow-link" href="https://rocketleague.tracker.network/rocket-league/profile/epic/Matees_czech/overview" target="_blank" rel="noopener noreferrer">Live profile</a></div><h3 id="rocket-title">Rocket<br><em>League.</em></h3><p class="game-subtitle">Live profile and optional uploaded replay stats.</p><div data-content="rocket" class="game-data" aria-live="polite"><p class="pending">Loading replays…</p></div></article>
         </div>
       </section>
 
       <section class="steam-section section-block" id="steam" aria-labelledby="steam-title">
-        <div class="section-heading"><div><span class="section-index">Steam</span><h2 id="steam-title">The game library</h2></div><p>Three accounts, one searchable shelf.</p></div>
+        <div class="section-heading"><h2 id="steam-title">The game<br><em>library.</em></h2><p>Three accounts, one searchable shelf.</p></div>
         <div class="steam-layout">
-          <div class="steam-aside"><label for="steam-profile">Account selector</label><select id="steam-profile"><option value="76561199147369622">Main account · 9622</option><option value="76561199113854269">Alt account · 4269</option><option value="76561199527518684">Secondary alt · 8684</option></select><div class="steam-identity"><span class="small-label">Selected Steam ID</span><strong id="steam-id">76561199147369622</strong><span id="steam-status" class="steam-status">Status requires Steam API key</span></div><a id="steam-link" class="button button-dark" href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer">Open Steam profile <span aria-hidden="true">↗</span></a><p class="steam-aside-note">Game libraries only appear when their Steam game details are public and a Steam API key is configured.</p></div>
+          <div class="steam-aside"><label for="steam-profile">Choose a Steam account</label><select id="steam-profile"><option value="76561199147369622">Main account</option><option value="76561199113854269">Alt account</option><option value="76561199527518684">Secondary account</option></select><div class="steam-identity"><span class="small-label">Selected Steam ID</span><strong id="steam-id">76561199147369622</strong><span id="steam-status" class="steam-status">Status requires Steam API key</span></div><a id="steam-link" class="button button-dark arrow-link" href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer">Open Steam profile</a><p class="steam-aside-note">Game libraries appear when their Steam game details are public and a Steam API key is configured.</p></div>
           <div class="steam-main"><div class="steam-toolbar"><div><strong id="steam-count">Steam libraries</strong><span>Sorted by recent activity, then playtime</span></div><label class="search-wrap" for="steam-search"><span class="visually-hidden">Find a game</span><input id="steam-search" type="search" placeholder="Find a game" disabled></label></div><div id="steam-content" aria-live="polite"><p class="pending">Loading games…</p></div></div>
         </div>
       </section>
 
-      <section class="contact-section section-block" id="contact" aria-labelledby="contact-title"><div><span class="section-index">Contact</span><h2 id="contact-title">See you in the lobby<br>or the repo.</h2><p>Find me on GitHub, add a Steam profile, or copy my Discord username.</p></div><div class="contact-actions"><a href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a><button id="copyDiscordTag" type="button" aria-label="Copy Discord username m4t335_cz3ch">Discord · <strong>m4t335_cz3ch</strong><span id="copy-status" role="status">Copy ↗</span></button><a href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer">Steam <span aria-hidden="true">↗</span></a></div></section>
+      <section class="contact-section section-block" id="contact" aria-labelledby="contact-title"><div><h2 id="contact-title">See you in the<br><em>lobby.</em></h2><p>Find me on GitHub, add a Steam profile, or copy my Discord username.</p></div><div class="contact-actions"><a class="arrow-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer">GitHub</a><button id="copyDiscordTag" type="button" aria-label="Copy Discord username m4t335_cz3ch">Discord <strong>m4t335_cz3ch</strong><span id="copy-status" role="status">Copy</span></button><a class="arrow-link" href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer">Steam</a></div></section>
     </main>
-    <footer><span>© <span id="year">2026</span> Matěj Pertl</span><span>Built for code, games and everything between.</span><a href="#top">Back to top ↑</a></footer>
+    <footer><span>© <span id="year">2026</span> Matěj Pertl</span><span>Built for code and everything between.</span><a href="#top">Back to top</a></footer>
   </div>
 </body>
 </html>

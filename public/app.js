@@ -109,7 +109,7 @@ function updateSteamAccount() {
   const status = $("#steam-status");
   status.textContent = library?.status || "Status requires Steam API key";
   status.classList.toggle("online", library?.status === "Online");
-  $("#steam-count").textContent = library ? `${fmt(library.count)} visible games · ${library.name}` : `Steam ${id.slice(-4)} library`;
+  $("#steam-count").textContent = library ? `${fmt(library.count)} visible games · ${library.name}` : `${$("#steam-profile").selectedOptions[0].textContent} library`;
   visibleGames = 12;
   renderGames();
 }
@@ -162,7 +162,8 @@ function renderSteam(data) {
     stateMessage(root, data);
     const links = create("div", "profile-links");
     for (const id of data.ids || accounts) {
-      const link = create("a", "text-link", `Steam ${id.slice(-4)} ↗`);
+      const account = [...$("#steam-profile").options].find(option => option.value === id);
+      const link = create("a", "text-link", `${account?.textContent || "Steam account"} games`);
       link.href = `https://steamcommunity.com/profiles/${id}/games/`;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
@@ -177,7 +178,7 @@ function renderSteam(data) {
   $("#steam-search").disabled = false;
   for (const option of $("#steam-profile").options) {
     const library = libraries.find(item => item.id === option.value);
-    if (library) option.textContent = `${library.name} · ${option.value.slice(-4)}`;
+    if (library) option.textContent = library.name;
   }
   updateSteamAccount();
 }
@@ -211,9 +212,38 @@ $("#copyDiscordTag").addEventListener("click", async () => {
   } catch {
     status.textContent = "Copy failed";
   }
-  setTimeout(() => { status.textContent = "Copy ↗"; }, 1800);
+  setTimeout(() => { status.textContent = "Copy"; }, 1800);
 });
 $("#year").textContent = new Date().getFullYear();
+
+const navLinks = [...document.querySelectorAll('.site-header nav a')];
+const sections = navLinks.map(link => document.querySelector(link.getAttribute('href')));
+const gamePanels = [...document.querySelectorAll('.game-panel')];
+let scrollTicking = false;
+function syncScroll() {
+  const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  document.documentElement.style.setProperty('--scroll-progress', `${Math.min(100, window.scrollY / maxScroll * 100)}%`);
+  document.documentElement.style.setProperty('--orbit-angle', `${Math.min(window.scrollY, window.innerHeight) * .2}deg`);
+  document.body.classList.toggle('is-scrolled', window.scrollY > 36);
+  let activeId = null;
+  for (const section of sections) if (section.getBoundingClientRect().top <= window.innerHeight * .38) activeId = section.id;
+  for (const link of navLinks) {
+    if (link.getAttribute('href') === `#${activeId}`) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  }
+  for (const panel of gamePanels) {
+    const rect = panel.getBoundingClientRect();
+    panel.classList.toggle('is-current', rect.top < window.innerHeight * .68 && rect.bottom > window.innerHeight * .32);
+  }
+  scrollTicking = false;
+}
+window.addEventListener('scroll', () => {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(syncScroll);
+}, { passive: true });
+window.addEventListener('resize', syncScroll);
+syncScroll();
 updateSteamAccount();
 refresh();
 setInterval(refresh, 300000);
