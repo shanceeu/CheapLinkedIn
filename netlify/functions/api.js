@@ -29,6 +29,12 @@ function pickFirstValue(obj, keys) {
   return undefined;
 }
 
+function normalizeMetric(value) {
+  if (value === undefined || value === null || value === "") return "-";
+  const str = String(value).trim();
+  return str.replace(/^[^\d]*/, "").replace(/[^\d.%]+$/, "") || str;
+}
+
 function toSafeString(value) {
   if (value === undefined || value === null || value === "") return "-";
   return String(value).trim();
@@ -58,7 +64,7 @@ function flattenObject(value, result = {}) {
 }
 
 async function getSteamData(qs) {
-  const accounts = (qs.accounts || "").split(",").filter(Boolean);
+  const accounts = (qs.accounts || "76561199147369622,76561199113854269,76561199527518684").split(",").filter(Boolean);
   const steamApiKey = process.env.STEAM_API_KEY;
 
   if (!steamApiKey) {
@@ -91,7 +97,7 @@ async function getSteamData(qs) {
     const profileJson = await profileRes.json();
     const player = profileJson.response?.players?.[0];
 
-    if (player && !mainName) {
+    if (player && mainName === "Main account") {
       mainName = player.personaname || "Main account";
     }
 
@@ -181,12 +187,12 @@ async function getLeetifyData(qs) {
 
   const flat = flattenObject(json);
   const stats = {
-    kd: pickFirstValue(flat, ["kd", "kdRatio", "killDeathRatio", "kdr"]) ?? "-",
-    headshot: pickFirstValue(flat, ["headshot", "headshotPct", "headshot_pct", "headshotPercentage"]) ?? "-",
-    winRate: pickFirstValue(flat, ["winRate", "winrate", "win_rate", "winRatePct"]) ?? "-",
-    matches: pickFirstValue(flat, ["matches", "totalMatches", "matchCount", "gamesPlayed"]) ?? "-",
-    rating: pickFirstValue(flat, ["rating", "elo", "mmr", "rankRating"]) ?? "-",
-    rank: pickFirstValue(flat, ["rank", "division", "tier", "rankName"]) ?? "-"
+    kd: normalizeMetric(pickFirstValue(flat, ["kd", "kdRatio", "killDeathRatio", "kdr"])) || "-",
+    headshot: normalizeMetric(pickFirstValue(flat, ["headshot", "headshotPct", "headshot_pct", "headshotPercentage"])) || "-",
+    winRate: normalizeMetric(pickFirstValue(flat, ["winRate", "winrate", "win_rate", "winRatePct"])) || "-",
+    matches: normalizeMetric(pickFirstValue(flat, ["matches", "totalMatches", "matchCount", "gamesPlayed"])) || "-",
+    rating: normalizeMetric(pickFirstValue(flat, ["rating", "elo", "mmr", "rankRating"])) || "-",
+    rank: toSafeString(pickFirstValue(flat, ["rank", "division", "tier", "rankName"])) || "-"
   };
 
   return {
@@ -208,11 +214,12 @@ async function getLeagueData(qs) {
   const rank = extractFromHtml(html, [
     /(Unranked|Bronze|Silver|Gold|Platinum|Emerald|Diamond|Master|Grandmaster|Challenger)/i,
     /"tier":"([A-Za-z]+)"/i,
-    /rank\s*[:=]\s*([A-Za-z]+)/i
+    /"rank":"([A-Za-z\s]+)"/i,
+    /\bRank\s*[:=]\s*([A-Za-z\s]+)/i
   ], "Unranked");
-  const lp = extractFromHtml(html, [/\b(\d+)\s*LP\b/i, /\bLP\s*[:=]\s*(\d+)/i], "-");
-  const winRate = extractFromHtml(html, [/\b(\d+(?:\.\d+)?)%\s*win\b/i, /winRate\D+(\d+(?:\.\d+)?)%/i], "-");
-  const games = extractFromHtml(html, [/\b(\d+)\s*games\b/i, /matches\D+(\d+)/i], "-");
+  const lp = extractFromHtml(html, [/\b(\d+)\s*LP\b/i, /\bLP\s*[:=]\s*(\d+)/i, /\b"lp"\s*:\s*(\d+)/i], "-");
+  const winRate = extractFromHtml(html, [/\b(\d+(?:\.\d+)?)%\s*win\b/i, /winRate\D+(\d+(?:\.\d+)?)%/i, /\b"winRate"\s*:\s*"?(\d+(?:\.\d+)?)%?/i], "-");
+  const games = extractFromHtml(html, [/\b(\d+)\s*games\b/i, /matches\D+(\d+)/i, /\b"matches"\s*:\s*(\d+)/i], "-");
 
   return {
     statusCode: 200,
@@ -242,11 +249,12 @@ async function getRocketData(qs) {
   const rank = extractFromHtml(html, [
     /(Unranked|Bronze|Silver|Gold|Platinum|Diamond|Champion|Grand Champion|Supersonic Legend)/i,
     /"tier":"([A-Za-z ]+)"/i,
-    /rank\s*[:=]\s*([A-Za-z ]+)/i
+    /"rank":"([A-Za-z ]+)"/i,
+    /\bRank\s*[:=]\s*([A-Za-z ]+)/i
   ], "Unranked");
-  const mmr = extractFromHtml(html, [/\b(\d{2,})\s*MMR\b/i, /MMR\D+(\d{2,})/i], "-");
-  const wins = extractFromHtml(html, [/\b(\d+)\s*Wins\b/i, /wins\D+(\d+)/i], "-");
-  const goals = extractFromHtml(html, [/\b(\d+)\s*Goals\b/i, /goals\D+(\d+)/i], "-");
+  const mmr = extractFromHtml(html, [/\b(\d{2,})\s*MMR\b/i, /MMR\D+(\d{2,})/i, /\b"mmr"\s*:\s*"?(\d{2,})/i], "-");
+  const wins = extractFromHtml(html, [/\b(\d+)\s*Wins\b/i, /wins\D+(\d+)/i, /\b"wins"\s*:\s*(\d+)/i], "-");
+  const goals = extractFromHtml(html, [/\b(\d+)\s*Goals\b/i, /goals\D+(\d+)/i, /\b"goals"\s*:\s*(\d+)/i], "-");
 
   return {
     statusCode: 200,
@@ -262,4 +270,3 @@ async function getRocketData(qs) {
     })
   };
 }
-

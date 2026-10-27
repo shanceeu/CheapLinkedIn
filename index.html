@@ -492,12 +492,12 @@
                   <span class="pill">Main</span>
                 </a>
 
-                <a class="social-link" href="https://steamcommunity.com/id/perma_matees/" target="_blank">
+                <a class="social-link" href="http://steamcommunity.com/profiles/76561199113854269/" target="_blank">
                   <span class="link-left"><span class="icon steam">S</span> Steam alt</span>
                   <span class="pill">Alt</span>
                 </a>
 
-                <a class="social-link" href="https://steamcommunity.com/profiles/76561199527518684" target="_blank">
+                <a class="social-link" href="https://steamcommunity.com/profiles/76561199527518684/" target="_blank">
                   <span class="link-left"><span class="icon steam">S</span> Steam alt 2</span>
                   <span class="pill">Alt</span>
                 </a>
@@ -571,7 +571,7 @@
 
       async function loadSteam() {
         try {
-          const res = await fetch(`${API_BASE}?type=steam&accounts=76561199147369622,76561199527518684,perma_matees`);
+          const res = await fetch(`${API_BASE}?type=steam&accounts=76561199147369622,76561199113854269,76561199527518684`);
           const data = await res.json();
 
           if (!data || !data.games) {
