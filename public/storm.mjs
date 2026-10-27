@@ -8,6 +8,7 @@ if (context) {
   let particles = [];
   let frame = 0;
   let previous = 0;
+  let effect = ["storm", "matrix", "still"].includes(localStorage.getItem("site-effect")) ? localStorage.getItem("site-effect") : "storm";
 
   function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -28,6 +29,8 @@ if (context) {
 
   function draw(time) {
     context.clearRect(0, 0, width, height);
+    if (effect === "matrix") return drawMatrix(time);
+    if (effect === "still") return drawStill();
     const centerX = width < 700 ? width * .74 : width * .77;
     const centerY = height * .48;
     const radius = Math.min(width, height) * .48;
@@ -87,6 +90,34 @@ if (context) {
     }
   }
 
+  function drawStill() {
+    const glow = context.createRadialGradient(width * .8, height * .42, 1, width * .8, height * .42, Math.max(width, height) * .7);
+    glow.addColorStop(0, "rgba(155, 45, 56, .26)");
+    glow.addColorStop(1, "rgba(30, 8, 16, 0)");
+    context.fillStyle = glow;
+    context.fillRect(0, 0, width, height);
+  }
+
+  function drawMatrix(time) {
+    context.fillStyle = "rgba(18, 6, 12, .28)";
+    context.fillRect(0, 0, width, height);
+    const gap = width < 700 ? 26 : 31;
+    const rows = Math.ceil(height / gap) + 3;
+    const columns = Math.ceil(width / gap);
+    const phase = reducedMotion.matches ? 0 : Math.floor(time / 170 + window.scrollY * .12);
+    context.font = `13px "Space Grotesk", sans-serif`;
+    context.textAlign = "center";
+    for (let column = 0; column < columns; column++) {
+      const offset = (column * 17 + phase) % rows;
+      for (let index = 0; index < 9; index++) {
+        const row = (offset - index + rows) % rows;
+        const seed = (column * 23 + row * 71 + Math.floor(phase / 3)) % 10;
+        context.fillStyle = index === 0 ? "rgba(255, 183, 198, .46)" : `rgba(220, 75, 107, ${.22 * (1 - index / 10)})`;
+        context.fillText(seed, column * gap + gap / 2, row * gap + gap / 2);
+      }
+    }
+  }
+
   function loop(time) {
     if (time - previous >= 33) {
       draw(time);
@@ -104,6 +135,10 @@ if (context) {
   window.addEventListener("resize", resize, { passive: true });
   document.addEventListener("visibilitychange", updateMotion);
   reducedMotion.addEventListener("change", updateMotion);
+  window.addEventListener("site-effect-change", event => {
+    effect = ["storm", "matrix", "still"].includes(event.detail) ? event.detail : "storm";
+    updateMotion();
+  });
   resize();
   updateMotion();
 }

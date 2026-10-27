@@ -6,6 +6,8 @@ The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware
 
 An original canvas atmosphere adds a slow crimson vortex and flock silhouettes behind the page. It pauses when the tab is hidden and becomes static when reduced motion is requested. Game panels use softer rounded surfaces.
 
+The Studio section lets visitors choose the displayed name (Matěj Pertl, Sm1ted, or Matees_czech), English or Czech, wine/ruby/Indanthrene Blue accents, Crowstorm/number rain/still backgrounds, and system/halo/crosshair cursors. Choices are saved in the browser. The hero types its slogan on load, and a chapter rail tracks the current section during scrolling. The page also includes a timezone clock with seconds, a decimal/hexadecimal/binary/octal integer converter, the supplied Haxagon and competition results, student quotes, Instagram, and a link to Vítkova procvičovna. Reduced motion stops ambient animation and type-out.
+
 ## Features carried over from the original site
 
 - Matěj's profile, GitHub link, working languages and project links.
