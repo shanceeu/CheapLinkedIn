@@ -22,14 +22,54 @@ exports.handler = async function (event) {
   }
 };
 
+function pickFirstValue(obj, keys) {
+  for (const key of keys) {
+    if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") return obj[key];
+  }
+  return undefined;
+}
+
+function toSafeString(value) {
+  if (value === undefined || value === null || value === "") return "-";
+  return String(value).trim();
+}
+
+function extractFromHtml(html, patterns, fallback = "-") {
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match && match[1]) return match[1].trim();
+  }
+  return fallback;
+}
+
+function flattenObject(value, result = {}) {
+  if (!value || typeof value !== "object") return result;
+
+  Object.keys(value).forEach((key) => {
+    const item = value[key];
+    if (item && typeof item === "object" && !Array.isArray(item)) {
+      flattenObject(item, result);
+    } else {
+      result[key] = item;
+    }
+  });
+
+  return result;
+}
+
 async function getSteamData(qs) {
   const accounts = (qs.accounts || "").split(",").filter(Boolean);
   const steamApiKey = process.env.STEAM_API_KEY;
 
   if (!steamApiKey) {
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "STEAM_API_KEY missing" })
+      statusCode: 200,
+      body: JSON.stringify({
+        mainName: "Main account",
+        recentCount: 0,
+        totalHours: 0,
+        games: []
+      })
     };
   }
 
@@ -125,25 +165,33 @@ async function getLeetifyData(qs) {
     json = JSON.parse(text);
   } catch {
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Leetify response not JSON" })
+      statusCode: 200,
+      body: JSON.stringify({
+        stats: {
+          kd: "-",
+          headshot: "-",
+          winRate: "-",
+          matches: "-",
+          rating: "-",
+          rank: "-"
+        }
+      })
     };
   }
 
-  const stats = json.stats || json.data || json;
+  const flat = flattenObject(json);
+  const stats = {
+    kd: pickFirstValue(flat, ["kd", "kdRatio", "killDeathRatio", "kdr"]) ?? "-",
+    headshot: pickFirstValue(flat, ["headshot", "headshotPct", "headshot_pct", "headshotPercentage"]) ?? "-",
+    winRate: pickFirstValue(flat, ["winRate", "winrate", "win_rate", "winRatePct"]) ?? "-",
+    matches: pickFirstValue(flat, ["matches", "totalMatches", "matchCount", "gamesPlayed"]) ?? "-",
+    rating: pickFirstValue(flat, ["rating", "elo", "mmr", "rankRating"]) ?? "-",
+    rank: pickFirstValue(flat, ["rank", "division", "tier", "rankName"]) ?? "-"
+  };
 
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      stats: {
-        kd: stats.kd ?? stats.kdRatio ?? "-",
-        headshot: stats.headshot ?? stats.headshotPct ?? "-",
-        winRate: stats.winRate ?? stats.winrate ?? "-",
-        matches: stats.matches ?? stats.totalMatches ?? "-",
-        rating: stats.rating ?? stats.elo ?? "-",
-        rank: stats.rank ?? stats.division ?? "-"
-      }
-    })
+    body: JSON.stringify({ stats })
   };
 }
 
@@ -154,24 +202,27 @@ async function getLeagueData(qs) {
   const res = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0" }
   });
-
   const html = await res.text();
 
   const name = decodeURIComponent(username).replace(/%23/g, "#");
-  const rank = (html.match(/(Unranked|Bronze|Silver|Gold|Platinum|Emerald|Diamond|Master|Grandmaster|Challenger)/i) || [])[1] || "Unranked";
-  const lp = (html.match(/(\d+)\s*LP/i) || [])[1] || "-";
-  const winRate = (html.match(/(\d+%)\s*win/i) || [])[1] || "-";
-  const games = (html.match(/(\d+)\s*games/i) || [])[1] || "-";
+  const rank = extractFromHtml(html, [
+    /(Unranked|Bronze|Silver|Gold|Platinum|Emerald|Diamond|Master|Grandmaster|Challenger)/i,
+    /"tier":"([A-Za-z]+)"/i,
+    /rank\s*[:=]\s*([A-Za-z]+)/i
+  ], "Unranked");
+  const lp = extractFromHtml(html, [/\b(\d+)\s*LP\b/i, /\bLP\s*[:=]\s*(\d+)/i], "-");
+  const winRate = extractFromHtml(html, [/\b(\d+(?:\.\d+)?)%\s*win\b/i, /winRate\D+(\d+(?:\.\d+)?)%/i], "-");
+  const games = extractFromHtml(html, [/\b(\d+)\s*games\b/i, /matches\D+(\d+)/i], "-");
 
   return {
     statusCode: 200,
     body: JSON.stringify({
       summary: {
         name,
-        rank,
-        lp,
-        winRate,
-        games,
+        rank: toSafeString(rank),
+        lp: toSafeString(lp),
+        winRate: toSafeString(winRate),
+        games: toSafeString(games),
         main: "Mid",
         champions: "Ahri / Akali"
       }
@@ -186,25 +237,29 @@ async function getRocketData(qs) {
   const res = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0" }
   });
-
   const html = await res.text();
 
-  const rank = (html.match(/(Unranked|Bronze|Silver|Gold|Platinum|Diamond|Champion|Grand Champion|Supersonic Legend)/i) || [])[1] || "Unranked";
-  const mmr = (html.match(/(\d{2,})\s*MMR/i) || [])[1] || "-";
-  const wins = (html.match(/(\d+)\s*Wins/i) || [])[1] || "-";
-  const goals = (html.match(/(\d+)\s*Goals/i) || [])[1] || "-";
+  const rank = extractFromHtml(html, [
+    /(Unranked|Bronze|Silver|Gold|Platinum|Diamond|Champion|Grand Champion|Supersonic Legend)/i,
+    /"tier":"([A-Za-z ]+)"/i,
+    /rank\s*[:=]\s*([A-Za-z ]+)/i
+  ], "Unranked");
+  const mmr = extractFromHtml(html, [/\b(\d{2,})\s*MMR\b/i, /MMR\D+(\d{2,})/i], "-");
+  const wins = extractFromHtml(html, [/\b(\d+)\s*Wins\b/i, /wins\D+(\d+)/i], "-");
+  const goals = extractFromHtml(html, [/\b(\d+)\s*Goals\b/i, /goals\D+(\d+)/i], "-");
 
   return {
     statusCode: 200,
     body: JSON.stringify({
       summary: {
-        rank,
-        mmr,
-        wins,
-        goals,
+        rank: toSafeString(rank),
+        mmr: toSafeString(mmr),
+        wins: toSafeString(wins),
+        goals: toSafeString(goals),
         season: "Current",
         platform: "Epic"
       }
     })
   };
 }
+
