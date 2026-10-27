@@ -348,7 +348,7 @@
 
               <a
                 id="opggLink"
-                href="https://www.op.gg/summoners/na/shanceeu"
+                href="https://www.op.gg/summoners/eune/Sm1ted"
                 target="_blank"
                 rel="noreferrer"
                 class="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-100"
@@ -367,7 +367,7 @@
               <div class="space-y-3">
                 <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
                   <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Summoner</div>
-                  <div id="summonerName" class="mt-2 text-lg font-bold text-white">shanceeu</div>
+                  <div id="summonerName" class="mt-2 text-lg font-bold text-white">Sm1ted#Diff</div>
                 </div>
 
                 <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
@@ -546,8 +546,8 @@
       });
 
       const riotConfig = {
-        region: 'na',
-        summoner: 'shanceeu'
+        region: 'eune',
+        summoner: 'Sm1ted'
       };
 
       const opggLink = document.getElementById('opggLink');
@@ -580,7 +580,7 @@
           const topChampions = Array.isArray(data.topChampions) ? data.topChampions : [];
           const queueText = rank.queue ? `${rank.queue} · ${rank.tier} ${rank.rank || ''}`.trim() : 'Solo Queue';
 
-          summonerName.textContent = data.summonerName || riotConfig.summoner;
+          summonerName.textContent = `${data.summonerName || riotConfig.summoner}#Diff`;
           opggLink.href = `https://www.op.gg/summoners/${riotConfig.region}/${encodeURIComponent(data.summonerName || riotConfig.summoner)}`;
 
           if (rank.tier) {
@@ -596,6 +596,7 @@
           champions.textContent = topChampions.length ? topChampions.map((champion) => champion.name).join(' · ') : 'No champions yet';
         } catch (error) {
           console.error('League fetch failed:', error);
+          summonerName.textContent = 'Sm1ted#Diff';
           setLeagueFallback('Set RIOT_API_KEY and the correct summoner name in Netlify env vars.');
         }
       }
