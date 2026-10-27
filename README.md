@@ -4,12 +4,16 @@ A redesigned portfolio with selected GitHub repositories, Discord contact, three
 
 The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress, navigation, and identity artwork. Motion is reduced when the visitor requests it. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
 
+An original canvas atmosphere adds a slow crimson vortex and flock silhouettes behind the page. It pauses when the tab is hidden and becomes static when reduced motion is requested. Game panels use softer rounded surfaces.
+
 ## Features carried over from the original site
 
 - Matěj's profile, GitHub link, working languages and project links.
 - The three-account Steam selector and direct profile links. With a Steam API key, it now shows actual persona status and searchable visible game libraries.
 - League of Legends profile and ranked data for `Sm1ted#Diff` on EUNE, recent champions, an OP.GG shortcut, and automatic five-minute refresh.
 - The Discord username copy button.
+- Leetify views for overview, aim, utility, and duels, using fields from the public profile API.
+- Steam library search and sorting by last played date, total playtime, or name. Games without a last played date fall back to two-week activity, then lifetime hours.
 
 The previous `api.js` returned fallback values for several stats, scraped third-party HTML, and its League route did not match the page's request. The new functions use Leetify's public API, Riot's current Riot ID/PUUID routes, ballchasing replay data, and Steam's Web API. CS2 and Rocket League now have their own visible tracker panels.
 
