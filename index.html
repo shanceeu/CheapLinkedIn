@@ -347,36 +347,37 @@
               </div>
 
               <a
-                href="https://www.op.gg/"
+                id="opggLink"
+                href="https://www.op.gg/summoners/na/shanceeu"
                 target="_blank"
                 rel="noreferrer"
                 class="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-100"
               >
-                OP.GG
+                OP.GG Tracker
               </a>
             </div>
 
-            <div class="mt-5 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+            <div id="leagueStats" class="mt-5 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
               <div class="rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-500/20 to-indigo-500/10 p-5">
                 <div class="text-[11px] uppercase tracking-[0.25em] text-slate-300">Rank</div>
-                <div class="mt-2 text-3xl font-black text-white">Gold III</div>
-                <div class="mt-1 text-sm text-slate-300">NA / Solo Queue</div>
+                <div id="leagueTier" class="mt-2 text-3xl font-black text-white">Loading…</div>
+                <div id="leagueQueue" class="mt-1 text-sm text-slate-300">Connecting to tracker…</div>
               </div>
 
               <div class="space-y-3">
                 <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
-                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Main Role</div>
-                  <div class="mt-2 text-lg font-bold text-white">Mid Lane</div>
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Summoner</div>
+                  <div id="summonerName" class="mt-2 text-lg font-bold text-white">shanceeu</div>
                 </div>
 
                 <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
-                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Main Champions</div>
-                  <div class="mt-2 text-lg font-bold text-white">Ahri / Akali</div>
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">LP / Win Rate</div>
+                  <div id="leagueLp" class="mt-2 text-lg font-bold text-white">—</div>
                 </div>
 
                 <div class="rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
-                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Win Rate</div>
-                  <div class="mt-2 text-lg font-bold text-white">56%</div>
+                  <div class="text-[11px] uppercase tracking-[0.25em] text-slate-400">Top Champions</div>
+                  <div id="champions" class="mt-2 text-lg font-bold text-white">—</div>
                 </div>
               </div>
             </div>
@@ -543,6 +544,64 @@
           }, 1200);
         }
       });
+
+      const riotConfig = {
+        region: 'na',
+        summoner: 'shanceeu'
+      };
+
+      const opggLink = document.getElementById('opggLink');
+      const summonerName = document.getElementById('summonerName');
+      const leagueTier = document.getElementById('leagueTier');
+      const leagueQueue = document.getElementById('leagueQueue');
+      const leagueLp = document.getElementById('leagueLp');
+      const champions = document.getElementById('champions');
+
+      function setLeagueFallback(message) {
+        leagueTier.textContent = 'Unavailable';
+        leagueQueue.textContent = message;
+        leagueLp.textContent = '—';
+        champions.textContent = '—';
+      }
+
+      async function loadLeagueStats() {
+        const url = `/.netlify/functions/api?type=league&region=${encodeURIComponent(riotConfig.region)}&name=${encodeURIComponent(riotConfig.summoner)}`;
+
+        try {
+          const response = await fetch(url, { cache: 'no-store' });
+          const payload = await response.json();
+
+          if (!response.ok || payload.error) {
+            throw new Error(payload.message || payload.error || 'League tracker unavailable');
+          }
+
+          const data = payload.data || {};
+          const rank = data.rank || {};
+          const topChampions = Array.isArray(data.topChampions) ? data.topChampions : [];
+          const queueText = rank.queue ? `${rank.queue} · ${rank.tier} ${rank.rank || ''}`.trim() : 'Solo Queue';
+
+          summonerName.textContent = data.summonerName || riotConfig.summoner;
+          opggLink.href = `https://www.op.gg/summoners/${riotConfig.region}/${encodeURIComponent(data.summonerName || riotConfig.summoner)}`;
+
+          if (rank.tier) {
+            leagueTier.textContent = `${rank.tier} ${rank.rank || ''}`.trim();
+            leagueQueue.textContent = `${rank.wins}W / ${rank.losses}L · ${rank.winRate}% WR`;
+            leagueLp.textContent = `${rank.lp} LP`;
+          } else {
+            leagueTier.textContent = 'Unranked';
+            leagueQueue.textContent = 'No ranked solo entry found';
+            leagueLp.textContent = '—';
+          }
+
+          champions.textContent = topChampions.length ? topChampions.map((champion) => champion.name).join(' · ') : 'No champions yet';
+        } catch (error) {
+          console.error('League fetch failed:', error);
+          setLeagueFallback('Set RIOT_API_KEY and the correct summoner name in Netlify env vars.');
+        }
+      }
+
+      loadLeagueStats();
+      setInterval(loadLeagueStats, 300000);
     </script>
   </body>
 </html>
