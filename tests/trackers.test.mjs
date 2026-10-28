@@ -30,6 +30,28 @@ test("League selects solo queue and only the tracked participant", () => {
   assert.deepEqual(data.recentChampions, ["Ahri"]);
 });
 
+test("League computes selectable recent combat and farming stats from the tracked player", () => {
+  const data = shapeLeague([], [
+    { info: { gameDuration: 1800, participants: [
+      { puuid: "mine", teamId: 100, championName: "Ahri", win: true, kills: 5, deaths: 2, assists: 9, totalMinionsKilled: 120, neutralMinionsKilled: 30, totalDamageDealtToChampions: 12000, goldEarned: 9000, visionScore: 18 },
+      { puuid: "ally", teamId: 100, kills: 10 }, { puuid: "enemy", teamId: 200, kills: 20 },
+    ] } },
+    { info: { gameDuration: 1200, participants: [
+      { puuid: "mine", teamId: 100, championName: "Lux", win: false, kills: 2, deaths: 4, assists: 6, totalMinionsKilled: 70, neutralMinionsKilled: 10, totalDamageDealtToChampions: 8000, goldEarned: 6000, visionScore: 10 },
+      { puuid: "ally", teamId: 100, kills: 8 }, { puuid: "enemy", teamId: 200, kills: 12 },
+    ] } },
+  ], "mine", "Sm1ted", "Diff");
+  assert.equal(data.recentStats.sample, 2);
+  assert.equal(data.recentStats.winRate, 0.5);
+  assert.equal(data.recentStats.avgDamage, 10000);
+  assert.equal(data.recentStats.csPerMinute, 4.6);
+  assert.equal(data.recentStats.goldPerMinute, 300);
+  assert.equal(data.recentStats.visionPerMinute, 0.56);
+  assert.equal(data.recentStats.kda, 22 / 6);
+  assert.equal(data.recentStats.killParticipation, ((14 / 15) + (8 / 10)) / 2);
+  assert.deepEqual(data.champions.map(champion => champion.champion), ["Ahri", "Lux"]);
+});
+
 test("Rocket stats only count the identified player in replay details", () => {
   const data = shapeRocket([{ id: "x", blue: { goals: 2, players: [{ name: "Matees_czech", stats: { core: { goals: 1, assists: 0, saves: 3 } } }] }, orange: { goals: 1, players: [{ name: "Other", stats: { core: { goals: 1 } } }] } }], { name: "Matees_czech" });
   assert.equal(data.sample, 1);
