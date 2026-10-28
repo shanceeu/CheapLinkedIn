@@ -49,10 +49,10 @@ bindChoice("#cursor-select", "cursor", "system", value => {
   cursor.classList.remove("visible", "over-action");
 });
 window.addEventListener("pointermove", event => {
-  if (event.pointerType === "touch" || reducedMotion.matches || !finePointer.matches || document.documentElement.dataset.cursor === "system") return;
+  if (event.pointerType === "touch" || reducedMotion.matches || !finePointer.matches || document.documentElement.dataset.cursor !== "halo") return;
   cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
   cursor.classList.add("visible");
-  cursor.classList.toggle("over-action", document.documentElement.dataset.cursor === "halo" && event.target instanceof Element && Boolean(event.target.closest("a, button, select, input")));
+  cursor.classList.toggle("over-action", event.target instanceof Element && Boolean(event.target.closest("a, button, select, input")));
 }, { passive: true });
 document.addEventListener("pointerout", event => {
   if (!event.relatedTarget) cursor.classList.remove("visible");
