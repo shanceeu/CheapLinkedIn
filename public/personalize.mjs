@@ -3,6 +3,7 @@ import { language, locale, onLanguageChange, setLanguage, t, translateStatic } f
 
 const $ = selector => document.querySelector(selector);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const finePointer = matchMedia("(pointer: fine)");
 const preferences = {
   accent: ["wine", "ruby", "blue"],
   effect: ["storm", "matrix", "still"],
@@ -45,17 +46,18 @@ cursor.setAttribute("aria-hidden", "true");
 document.body.append(cursor);
 bindChoice("#cursor-select", "cursor", "system", value => {
   document.documentElement.dataset.cursor = value;
-  if (value !== "halo") cursor.classList.remove("visible");
+  cursor.classList.remove("visible", "over-action");
 });
 window.addEventListener("pointermove", event => {
-  if (event.pointerType === "touch" || document.documentElement.dataset.cursor !== "halo") return;
+  if (event.pointerType === "touch" || reducedMotion.matches || !finePointer.matches || document.documentElement.dataset.cursor === "system") return;
   cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
   cursor.classList.add("visible");
-  cursor.classList.toggle("over-action", event.target instanceof Element && Boolean(event.target.closest("a, button, select, input")));
+  cursor.classList.toggle("over-action", document.documentElement.dataset.cursor === "halo" && event.target instanceof Element && Boolean(event.target.closest("a, button, select, input")));
 }, { passive: true });
 document.addEventListener("pointerout", event => {
   if (!event.relatedTarget) cursor.classList.remove("visible");
 });
+window.addEventListener("blur", () => cursor.classList.remove("visible"));
 
 const clock = $("#live-clock");
 const timezone = $("#timezone-select");
@@ -96,6 +98,7 @@ updateConversion();
 const drawer = $("#tool-drawer");
 const toolsToggle = $("#tools-toggle");
 toolsToggle.addEventListener("click", () => {
+  drawer.append(cursor);
   drawer.showModal();
   toolsToggle.setAttribute("aria-expanded", "true");
   $("#language-select").focus();
@@ -106,6 +109,7 @@ drawer.addEventListener("click", event => {
   if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) drawer.close();
 });
 drawer.addEventListener("close", () => {
+  document.body.append(cursor);
   toolsToggle.setAttribute("aria-expanded", "false");
   toolsToggle.focus();
 });

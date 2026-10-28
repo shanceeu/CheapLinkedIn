@@ -2,15 +2,13 @@
 
 A redesigned portfolio with selected GitHub repositories, Discord contact, three Steam profiles, and game stats for CS2, League of Legends, and Rocket League. It deploys as a static site with Netlify Functions. API keys remain server-side.
 
-The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress and navigation. The hero features a representative GeForce RTX 5070 Ti 3D model that turns automatically while visible. The owner's exact Gigabyte WINDFORCE model remains named in the PC specs panel. The panel opens on hover, focus, or click and includes the confirmed monitor, mouse, and keyboard. Reduced-motion visitors see a still model. If Sketchfab is unavailable, the original GPU illustration remains visible and turns gently on its own. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
+The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress and navigation. The hero uses a local layered SVG/CSS model of a Gigabyte WINDFORCE card that turns gently on its own, without an embedded viewer or its controls. The PC specs panel opens on hover, focus, or click and includes the confirmed GPU, monitor, mouse, and keyboard. Reduced-motion visitors see a still card. The Steam selector and settings fields share the same rounded control style. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
 
 An original canvas atmosphere adds a slow crimson vortex and flock silhouettes behind the page. It pauses when the tab is hidden and becomes static when reduced motion is requested. Game panels use softer rounded surfaces.
 
-The Settings sidebar holds English/Czech language, wine/ruby/Indanthrene Blue page colors, Crowstorm/number rain/still backgrounds, system/halo/crosshair cursors, a timezone clock with seconds, and a decimal/hexadecimal/binary/octal integer converter. Appearance choices are saved in the browser. The displayed name stays Matěj Pertl. The hero types its slogan on load, and a chapter rail tracks the current section during scrolling. The page also includes the supplied Haxagon and competition results, student quotes, Instagram, and a link to Vítkova procvičovna. Reduced motion stops ambient animation and type-out.
+The Settings sidebar holds English/Czech language, wine/ruby/Indanthrene Blue page colors, Crowstorm/number rain/still backgrounds, system/halo/crosshair cursors, a timezone clock with seconds, and a decimal/hexadecimal/binary/octal integer converter. Appearance choices are saved in the browser. Halo and crosshair use one stable cursor layer across ordinary content and the settings dialog. The displayed name stays Matěj Pertl. The hero types its slogan on load, and a chapter rail tracks the current section during scrolling. The page also includes the supplied Haxagon and competition results, student quotes, Instagram, and a link to Vítkova procvičovna. Reduced motion stops ambient animation and type-out.
 
 GitHub, Discord, Instagram, Steam, and League of Legends icons are from [Simple Icons](https://simpleicons.org/) (CC0 1.0). The Rocket League mark is an original site illustration.
-
-The representative [RTX 5070 Ti 3D model by hakai315](https://sketchfab.com/3d-models/nvidia-rtx5070ti-1035d0d5985d4c3b8c91e3da9eb1fade) is embedded from Sketchfab under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The site credits the artist in the footer.
 
 ## Features carried over from the original site
 
