@@ -1,12 +1,12 @@
 const cs = {
-  "Back to top": "Zpět nahoru", "Work": "Tvorba", "Games": "Hry", "Contact": "Kontakt", "Switch to Czech": "Přepnout do češtiny", "Switch to English": "Switch to English",
-  "Primary navigation": "Hlavní navigace", "Selected repositories": "Vybrané repozitáře", "Time and number tools": "Čas a číselné nástroje", "Copy Discord username m4t335_cz3ch": "Zkopírovat Discord jméno m4t335_cz3ch", "Page sections": "Sekce stránky", "Achievements": "Úspěchy",
-  "Tools": "Nástroje", "Page color": "Barva stránky", "Time tools": "Časové nástroje", "Close converter": "Zavřít převodník", "Close": "Zavřít",
+  "Back to top": "Zpět nahoru", "Work": "Tvorba", "Games": "Hry", "Contact": "Kontakt",
+  "Primary navigation": "Hlavní navigace", "Selected repositories": "Vybrané repozitáře", "Copy Discord username m4t335_cz3ch": "Zkopírovat Discord jméno m4t335_cz3ch", "Page sections": "Sekce stránky", "Achievements": "Úspěchy",
+  "Settings": "Nastavení", "Settings.": "Nastavení.", "Appearance": "Vzhled", "Language": "Jazyk", "Page color": "Barva stránky", "Close settings": "Zavřít nastavení", "Close": "Zavřít",
   "Built for code.": "Stvořen pro kód.", "Made for play.": "Stvořen pro hru.",
   "Full-stack developer and gamer. Projects, ranked climbs, and the games in rotation, all in one place.": "Full-stack vývojář a hráč. Projekty, postup v žebříčcích a hry, které právě hraju, na jednom místě.",
-  "Explore my work": "Prohlédnout tvorbu", "See game stats": "Zobrazit herní statistiky", "Developer / player": "Vývojář / hráč", "Code and games, side by side": "Kód a hry vedle sebe",
-  "Make it": "Uprav si", "yours.": "po svém.", "Choose how this little corner of the internet looks and feels.": "Vyber si, jak bude tento kousek internetu vypadat a působit.",
-  "Display name": "Zobrazené jméno", "Accent color": "Barva akcentu", "Background effect": "Efekt pozadí", "Cursor style": "Styl kurzoru", "Wine · #58181F": "Vínová · #58181F", "Ruby · #E0115F": "Rubínová · #E0115F", "Indanthrene Blue · #0018A8": "Indanthrenová modrá · #0018A8", "Number rain": "Déšť čísel", "Still": "Klid", "System": "Výchozí", "Halo": "Světelný kruh", "Crosshair": "Zaměřovač",
+  "Explore my work": "Prohlédnout tvorbu", "See game stats": "Zobrazit herní statistiky", "Code and games, side by side": "Kód a hry vedle sebe",
+  "Illustration of a Gigabyte WINDFORCE graphics card": "Ilustrace grafické karty Gigabyte WINDFORCE", "Scroll to move · hover or tap for my setup": "Posuň stránku · najeď nebo klepni pro zobrazení sestavy", "My PC setup": "Moje PC sestava", "My setup.": "Moje sestava.", "Show my PC setup": "Zobrazit moji PC sestavu", "Hide my PC setup": "Skrýt moji PC sestavu", "Graphics": "Grafika", "Processor": "Procesor", "Memory": "Paměť", "Motherboard": "Základní deska", "Storage": "Úložiště", "Monitor": "Monitor", "Mouse": "Myš", "Keyboard": "Klávesnice", "Click the GPU again to close": "Klikni znovu na GPU pro zavření",
+  "Background effect": "Efekt pozadí", "Cursor style": "Styl kurzoru", "Wine · #58181F": "Vínová · #58181F", "Ruby · #E0115F": "Rubínová · #E0115F", "Indanthrene Blue · #0018A8": "Indanthrenová modrá · #0018A8", "Number rain": "Déšť čísel", "Still": "Klid", "System": "Výchozí", "Halo": "Světelný kruh", "Crosshair": "Zaměřovač",
   "Time, anywhere.": "Čas kdekoli.", "Timezone": "Časové pásmo", "Prague": "Praha", "New York": "New York", "Los Angeles": "Los Angeles", "Tokyo": "Tokio", "Sydney": "Sydney", "Number lab.": "Číselná dílna.", "Convert between number systems.": "Převod mezi číselnými soustavami.", "From": "Ze soustavy", "Value": "Hodnota", "Decimal": "Desítková", "Hexadecimal": "Šestnáctková", "Binary": "Dvojková", "Octal": "Osmičková",
   "What I’m": "Na čem", "building.": "pracuju.", "Projects and code from my GitHub profile.": "Projekty a kód z mého GitHubu.", "Working languages": "Programovací jazyky", "See GitHub profile": "Otevřít GitHub profil", "This portfolio": "Toto portfolio", "Game project": "Herní projekt", "Live stats dashboard": "Panel živých statistik",
   "Beyond the": "I mimo", "classroom.": "učebnu.", "A few results I’m proud of.": "Několik výsledků, na které jsem hrdý.", "126th": "126.", "in the Czech Republic": "v České republice", "Regional round": "Krajské kolo", "4th": "4.", "Finals": "Finále", "27th": "27.", "place": "místo", "“One more commit, then I’ll study for the exam.”": "„Ještě jeden commit a pak se začnu učit na zkoušku.“",
@@ -44,7 +44,7 @@ export function translateStatic(root = document.body) {
     const source = node.textContent;
     if (cs[source.trim()]) entries.push([node, source]);
   }
-  const attributes = [...root.querySelectorAll("[placeholder],[aria-label]")].flatMap(node => ["placeholder", "aria-label"].filter(name => cs[node.getAttribute(name)]).map(name => [node, name, node.getAttribute(name)]));
+  const attributes = [...root.querySelectorAll("[placeholder],[aria-label],[alt]")].flatMap(node => ["placeholder", "aria-label", "alt"].filter(name => cs[node.getAttribute(name)]).map(name => [node, name, node.getAttribute(name)]));
   const apply = () => {
     for (const [node, source] of entries) {
       const leading = source.match(/^\s*/)[0];

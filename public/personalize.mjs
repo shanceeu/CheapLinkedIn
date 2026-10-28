@@ -4,7 +4,6 @@ import { language, locale, onLanguageChange, setLanguage, t, translateStatic } f
 const $ = selector => document.querySelector(selector);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const preferences = {
-  identity: ["real", "sm1ted", "matees"],
   accent: ["wine", "ruby", "blue"],
   effect: ["storm", "matrix", "still"],
   cursor: ["system", "halo", "crosshair"],
@@ -15,16 +14,13 @@ function saved(key, fallback) {
 }
 
 translateStatic();
-$("#language-toggle").addEventListener("click", () => setLanguage(language() === "en" ? "cs" : "en"));
-function syncLanguageToggle() {
-  const button = $("#language-toggle");
-  button.textContent = language() === "en" ? "CZ" : "EN";
-  button.setAttribute("aria-label", language() === "en" ? "Switch to Czech" : "Přepnout do angličtiny");
+$("#language-select").addEventListener("change", event => setLanguage(event.target.value));
+function syncLanguageSelect() {
+  $("#language-select").value = language();
   updateClock();
 }
-onLanguageChange(syncLanguageToggle);
+onLanguageChange(syncLanguageSelect);
 
-const names = { real: "Matěj Pertl", sm1ted: "Sm1ted", matees: "Matees_czech" };
 function bindChoice(id, key, fallback, apply) {
   const select = $(id);
   select.value = saved(key, fallback);
@@ -34,58 +30,6 @@ function bindChoice(id, key, fallback, apply) {
     apply(select.value);
   });
 }
-const identitySelect = $("#identity-select");
-const nameKeys = Object.keys(names);
-let nameKey = saved("identity", "real");
-let nameTimer;
-let nameCycle;
-identitySelect.value = nameKey;
-function setDisplayedName(value) {
-  $("#brand-name").textContent = value;
-  $("#hero-name").textContent = value;
-}
-function showName(key, animate = true) {
-  clearTimeout(nameTimer);
-  nameKey = key;
-  identitySelect.value = key;
-  const name = names[key];
-  if (!animate || reducedMotion.matches) {
-    setDisplayedName(name);
-    $(".identity-letter").textContent = name[0].toUpperCase();
-    return;
-  }
-  let remaining = $("#brand-name").textContent.length;
-  let written = 0;
-  function step() {
-    if (remaining > 0) {
-      remaining--;
-      setDisplayedName($("#brand-name").textContent.slice(0, remaining));
-      nameTimer = setTimeout(step, 35);
-    } else if (written < name.length) {
-      written++;
-      setDisplayedName(name.slice(0, written));
-      nameTimer = setTimeout(step, 70);
-    } else $(".identity-letter").textContent = name[0].toUpperCase();
-  }
-  step();
-}
-function scheduleName() {
-  clearTimeout(nameCycle);
-  if (reducedMotion.matches || document.hidden) return;
-  nameCycle = setTimeout(() => {
-    showName(nameKeys[(nameKeys.indexOf(nameKey) + 1) % nameKeys.length]);
-    scheduleName();
-  }, 5000);
-}
-showName(nameKey, false);
-scheduleName();
-identitySelect.addEventListener("change", () => {
-  localStorage.setItem("site-identity", identitySelect.value);
-  showName(identitySelect.value);
-  scheduleName();
-});
-reducedMotion.addEventListener("change", () => { showName(nameKey, false); scheduleName(); });
-document.addEventListener("visibilitychange", scheduleName);
 bindChoice("#accent-select", "accent", "wine", value => {
   document.documentElement.dataset.accent = value;
   $("meta[name=theme-color]").content = { wine: "#58181F", ruby: "#E0115F", blue: "#0018A8" }[value];
@@ -131,7 +75,7 @@ function updateClock() {
 }
 document.addEventListener("visibilitychange", updateClock);
 updateClock();
-syncLanguageToggle();
+syncLanguageSelect();
 
 function updateConversion() {
   const error = $("#convert-error");
@@ -154,7 +98,7 @@ const toolsToggle = $("#tools-toggle");
 toolsToggle.addEventListener("click", () => {
   drawer.showModal();
   toolsToggle.setAttribute("aria-expanded", "true");
-  $("#number-input").focus();
+  $("#language-select").focus();
 });
 $("#tools-close").addEventListener("click", () => drawer.close());
 drawer.addEventListener("click", event => {
@@ -165,6 +109,43 @@ drawer.addEventListener("close", () => {
   toolsToggle.setAttribute("aria-expanded", "false");
   toolsToggle.focus();
 });
+
+const gpuShowcase = $("#gpu-showcase");
+const gpuToggle = $("#gpu-toggle");
+const pcSpecs = $("#pc-specs");
+let gpuPinned = false;
+let gpuHovered = false;
+let gpuFocused = false;
+function updateGpu() {
+  const open = gpuPinned || gpuHovered || gpuFocused;
+  gpuShowcase.classList.toggle("is-open", open);
+  gpuToggle.setAttribute("aria-expanded", String(open));
+  gpuToggle.setAttribute("aria-label", t(open ? "Hide my PC setup" : "Show my PC setup"));
+  pcSpecs.setAttribute("aria-hidden", String(!open));
+}
+gpuShowcase.addEventListener("pointerenter", event => {
+  if (event.pointerType !== "mouse" || !matchMedia("(hover: hover)").matches) return;
+  gpuHovered = true;
+  updateGpu();
+});
+gpuShowcase.addEventListener("pointerleave", () => { gpuHovered = false; updateGpu(); });
+gpuToggle.addEventListener("focus", () => { gpuFocused = true; updateGpu(); });
+gpuToggle.addEventListener("blur", () => { gpuFocused = false; updateGpu(); });
+gpuToggle.addEventListener("click", () => {
+  if (gpuPinned) {
+    gpuPinned = gpuHovered = gpuFocused = false;
+    gpuToggle.blur();
+  } else gpuPinned = true;
+  updateGpu();
+});
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape" || !gpuPinned) return;
+  gpuPinned = gpuHovered = gpuFocused = false;
+  gpuToggle.blur();
+  updateGpu();
+});
+onLanguageChange(updateGpu);
+updateGpu();
 
 const typeout = $("#typeout");
 let typeTimer;
@@ -203,7 +184,7 @@ setInterval(() => {
 const rail = document.createElement("nav");
 rail.className = "chapter-rail";
 rail.setAttribute("aria-label", "Page sections");
-for (const [id, label] of [["studio", "Studio"], ["work", "Work"], ["achievements", "Achievements"], ["games", "Games"], ["steam", "Steam"], ["contact", "Contact"]]) {
+for (const [id, label] of [["work", "Work"], ["achievements", "Achievements"], ["games", "Games"], ["steam", "Steam"], ["contact", "Contact"]]) {
   const link = document.createElement("a");
   link.href = `#${id}`;
   link.textContent = label;

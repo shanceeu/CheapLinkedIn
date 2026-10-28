@@ -19,9 +19,8 @@
   <div class="scroll-progress" aria-hidden="true"></div>
   <div class="site-shell" id="top">
     <header class="site-header">
-      <a class="wordmark" href="#top" aria-label="Back to top"><span class="wordmark-dot" aria-hidden="true"></span><span id="brand-name">Matěj Pertl</span></a>
-      <nav aria-label="Primary navigation"><a href="#work">Work</a><a href="#games">Games</a><a href="#steam">Steam</a><a href="#contact">Contact</a><button id="tools-toggle" type="button" aria-haspopup="dialog" aria-controls="tool-drawer" aria-expanded="false">Tools</button></nav>
-      <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch to Czech">CZ</button>
+      <a class="wordmark" href="#top" aria-label="Back to top"><span class="wordmark-dot" aria-hidden="true"></span><span>Matěj Pertl</span></a>
+      <nav aria-label="Primary navigation"><a href="#work">Work</a><a href="#games">Games</a><a href="#steam">Steam</a><a href="#contact">Contact</a><button id="tools-toggle" type="button" aria-haspopup="dialog" aria-controls="tool-drawer" aria-expanded="false">Settings</button></nav>
       <a class="header-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer"><img class="brand-icon" src="/icons/github.svg" alt="">GitHub</a>
     </header>
 
@@ -32,26 +31,29 @@
           <p>Full-stack developer and gamer. Projects, ranked climbs, and the games in rotation, all in one place.</p>
           <div class="hero-actions"><a class="button button-primary arrow-link" href="#work">Explore my work</a><a class="button button-plain arrow-link" href="#games">See game stats</a></div>
         </div>
-        <div class="identity-visual" aria-hidden="true">
-          <div class="identity-orbit"><span class="orbit-line orbit-line-one"></span><span class="orbit-line orbit-line-two"></span><span class="identity-letter">M</span><span class="orbit-dot"></span></div>
-          <span class="identity-caption">Developer / player</span>
-        </div>
-        <div class="hero-foot"><span id="hero-name">Matěj Pertl</span><span>Code and games, side by side</span></div>
-      </section>
-
-      <section class="studio-section section-block" id="studio" aria-labelledby="studio-title">
-        <div class="section-heading"><h2 id="studio-title">Make it<br><em>yours.</em></h2><p>Choose how this little corner of the internet looks and feels.</p></div>
-        <div class="studio-layout">
-          <div class="studio-controls">
-            <label for="identity-select">Display name</label><select id="identity-select"><option value="real">Matěj Pertl</option><option value="sm1ted">Sm1ted</option><option value="matees">Matees_czech</option></select>
-            <label for="accent-select">Page color</label><select id="accent-select"><option value="wine">Wine · #58181F</option><option value="ruby">Ruby · #E0115F</option><option value="blue">Indanthrene Blue · #0018A8</option></select>
-            <label for="effect-select">Background effect</label><select id="effect-select"><option value="storm">Crowstorm</option><option value="matrix">Number rain</option><option value="still">Still</option></select>
-            <label for="cursor-select">Cursor style</label><select id="cursor-select"><option value="system">System</option><option value="halo">Halo</option><option value="crosshair">Crosshair</option></select>
+        <div class="gpu-showcase" id="gpu-showcase">
+          <button class="gpu-trigger" id="gpu-toggle" type="button" aria-controls="pc-specs" aria-expanded="false" aria-label="Show my PC setup">
+            <span class="gpu-shine" aria-hidden="true"></span>
+            <img src="/gpu-windforce.svg" alt="Illustration of a Gigabyte WINDFORCE graphics card" draggable="false">
+            <span class="gpu-product">Gigabyte GeForce RTX 5070 Ti <strong>WINDFORCE</strong></span>
+            <span class="gpu-hint">Scroll to move · hover or tap for my setup</span>
+          </button>
+          <div class="pc-specs" id="pc-specs" role="region" aria-label="My PC setup" aria-hidden="true">
+            <h2>My setup.</h2>
+            <dl>
+              <div><dt>Graphics</dt><dd>Gigabyte GeForce RTX 5070 Ti WINDFORCE</dd></div>
+              <div><dt>Processor</dt><dd>AMD Ryzen 9 9900X</dd></div>
+              <div><dt>Memory</dt><dd>48 GB RAM</dd></div>
+              <div><dt>Motherboard</dt><dd>ASUS TUF GAMING X870E-PLUS WIFI7</dd></div>
+              <div><dt>Storage</dt><dd>Samsung 9100 PRO 2 TB · Intel 120 GB SSD</dd></div>
+              <div><dt>Monitor</dt><dd>ASUS TUF Gaming VG34VQL3A</dd></div>
+              <div><dt>Mouse</dt><dd>HyperX Pulsefire Haste 2 Pro</dd></div>
+              <div><dt>Keyboard</dt><dd>NZXT Function 2 Full Size</dd></div>
+            </dl>
+            <p>Click the GPU again to close</p>
           </div>
-          <aside class="utility-sidebar" aria-label="Time tools">
-            <div class="clock-tool"><div class="tool-heading"><h3>Time, anywhere.</h3><label for="timezone-select">Timezone</label></div><select id="timezone-select"><option value="Europe/Prague">Prague</option><option value="UTC">UTC</option><option value="America/New_York">New York</option><option value="America/Los_Angeles">Los Angeles</option><option value="Asia/Tokyo">Tokyo</option><option value="Australia/Sydney">Sydney</option></select><time id="live-clock" aria-live="off">--:--:--</time><span id="clock-date" class="clock-date"></span></div>
-          </aside>
         </div>
+        <div class="hero-foot"><span>Matěj Pertl</span><span>Code and games, side by side</span></div>
       </section>
 
       <section class="work-section section-block" id="work" aria-labelledby="work-title">
@@ -91,6 +93,25 @@
     </main>
     <footer><span>© <span id="year">2026</span> Matěj Pertl</span><span>Built for code and everything between.</span><a href="#top">Back to top</a></footer>
   </div>
-  <dialog id="tool-drawer" class="tool-drawer" aria-labelledby="drawer-title"><div class="drawer-head"><h2 id="drawer-title">Number lab.</h2><button id="tools-close" type="button" aria-label="Close converter">Close</button></div><p>Convert between number systems.</p><div class="converter-tool"><div class="converter-inputs"><label for="number-base">From</label><select id="number-base"><option value="10">Decimal</option><option value="16">Hexadecimal</option><option value="2">Binary</option><option value="8">Octal</option></select><label for="number-input">Value</label><input id="number-input" type="text" value="42" inputmode="text" spellcheck="false" autocomplete="off"></div><p id="convert-error" class="convert-error" role="status"></p><dl id="conversion-results"><div><dt>Decimal</dt><dd data-base="10">42</dd></div><div><dt>Hexadecimal</dt><dd data-base="16">2A</dd></div><div><dt>Binary</dt><dd data-base="2">101010</dd></div><div><dt>Octal</dt><dd data-base="8">52</dd></div></dl></div></dialog>
+  <dialog id="tool-drawer" class="tool-drawer" aria-labelledby="drawer-title">
+    <div class="drawer-head"><h2 id="drawer-title">Settings.</h2><button id="tools-close" type="button" aria-label="Close settings">Close</button></div>
+    <section class="drawer-section" aria-labelledby="appearance-title">
+      <h3 id="appearance-title">Appearance</h3>
+      <div class="drawer-controls">
+        <label for="language-select">Language</label><select id="language-select"><option value="en">English</option><option value="cs">Čeština</option></select>
+        <label for="accent-select">Page color</label><select id="accent-select"><option value="wine">Wine · #58181F</option><option value="ruby">Ruby · #E0115F</option><option value="blue">Indanthrene Blue · #0018A8</option></select>
+        <label for="effect-select">Background effect</label><select id="effect-select"><option value="storm">Crowstorm</option><option value="matrix">Number rain</option><option value="still">Still</option></select>
+        <label for="cursor-select">Cursor style</label><select id="cursor-select"><option value="system">System</option><option value="halo">Halo</option><option value="crosshair">Crosshair</option></select>
+      </div>
+    </section>
+    <section class="drawer-section" aria-labelledby="time-title">
+      <h3 id="time-title">Time, anywhere.</h3>
+      <label for="timezone-select">Timezone</label><select id="timezone-select"><option value="Europe/Prague">Prague</option><option value="UTC">UTC</option><option value="America/New_York">New York</option><option value="America/Los_Angeles">Los Angeles</option><option value="Asia/Tokyo">Tokyo</option><option value="Australia/Sydney">Sydney</option></select><time id="live-clock" aria-live="off">--:--:--</time><span id="clock-date" class="clock-date"></span>
+    </section>
+    <section class="drawer-section" aria-labelledby="converter-title">
+      <h3 id="converter-title">Number lab.</h3><p>Convert between number systems.</p>
+      <div class="converter-tool"><div class="converter-inputs"><label for="number-base">From</label><select id="number-base"><option value="10">Decimal</option><option value="16">Hexadecimal</option><option value="2">Binary</option><option value="8">Octal</option></select><label for="number-input">Value</label><input id="number-input" type="text" value="42" inputmode="text" spellcheck="false" autocomplete="off"></div><p id="convert-error" class="convert-error" role="status"></p><dl id="conversion-results"><div><dt>Decimal</dt><dd data-base="10">42</dd></div><div><dt>Hexadecimal</dt><dd data-base="16">2A</dd></div><div><dt>Binary</dt><dd data-base="2">101010</dd></div><div><dt>Octal</dt><dd data-base="8">52</dd></div></dl></div>
+    </section>
+  </dialog>
 </body>
 </html>

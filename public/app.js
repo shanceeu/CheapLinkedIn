@@ -287,11 +287,15 @@ $("#year").textContent = new Date().getFullYear();
 const navLinks = [...document.querySelectorAll('.site-header nav a')];
 const sections = navLinks.map(link => document.querySelector(link.getAttribute('href')));
 const gamePanels = [...document.querySelectorAll('.game-panel')];
+const reducedScrollMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let scrollTicking = false;
 function syncScroll() {
   const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   document.documentElement.style.setProperty('--scroll-progress', `${Math.min(100, window.scrollY / maxScroll * 100)}%`);
-  document.documentElement.style.setProperty('--orbit-angle', `${Math.min(window.scrollY, window.innerHeight) * .2}deg`);
+  const gpuPhase = reducedScrollMotion.matches ? 0 : Math.min(1, Math.max(0, window.scrollY / Math.max(1, window.innerHeight)));
+  document.documentElement.style.setProperty('--gpu-rise', `${Math.round(gpuPhase * -26)}px`);
+  document.documentElement.style.setProperty('--gpu-rotate', `${(gpuPhase * 5 - 2.5).toFixed(2)}deg`);
+  document.documentElement.style.setProperty('--gpu-scan', `${Math.round(gpuPhase * 130 - 65)}%`);
   document.body.classList.toggle('is-scrolled', window.scrollY > 36);
   let activeId = null;
   for (const section of sections) if (section.getBoundingClientRect().top <= window.innerHeight * .38) activeId = section.id;
@@ -311,6 +315,7 @@ window.addEventListener('scroll', () => {
   requestAnimationFrame(syncScroll);
 }, { passive: true });
 window.addEventListener('resize', syncScroll);
+reducedScrollMotion.addEventListener('change', syncScroll);
 syncScroll();
 updateSteamAccount();
 refresh();
