@@ -2,7 +2,7 @@
 
 A redesigned portfolio with selected GitHub repositories, Discord contact, three Steam profiles, and game stats for CS2, League of Legends, and Rocket League. It deploys as a static site with Netlify Functions. API keys remain server-side.
 
-The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress, navigation, and a custom Gigabyte WINDFORCE GPU illustration. The GPU moves subtly with scrolling and reveals a panel of verified PC and monitor specs on hover, focus, or click. Motion is reduced when the visitor requests it. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
+The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress, navigation, and a custom Gigabyte WINDFORCE GPU illustration. The GPU moves subtly with scrolling and reveals a panel of PC, monitor, mouse, and keyboard specs on hover, focus, or click. The peripherals are the models supplied by the owner; the other hardware was checked on this PC. Motion is reduced when the visitor requests it. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
 
 An original canvas atmosphere adds a slow crimson vortex and flock silhouettes behind the page. It pauses when the tab is hidden and becomes static when reduced motion is requested. Game panels use softer rounded surfaces.
 
