@@ -1,8 +1,8 @@
-# Matěj Pertl — developer & gamer
+# Matěj Pertl — student, coder & gamer
 
 A redesigned portfolio with selected GitHub repositories, Discord contact, three Steam profiles, and game stats for CS2, League of Legends, and Rocket League. It deploys as a static site with Netlify Functions. API keys remain server-side.
 
-The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress, navigation, and a custom Gigabyte WINDFORCE GPU illustration. The GPU moves subtly with scrolling and reveals a panel of PC, monitor, mouse, and keyboard specs on hover, focus, or click. The peripherals are the models supplied by the owner; the other hardware was checked on this PC. Motion is reduced when the visitor requests it. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
+The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress and navigation. The hero features a representative GeForce RTX 5070 Ti 3D model whose camera rotates as the page scrolls, while the owner's exact Gigabyte WINDFORCE model remains named in the PC specs panel. The panel opens on hover, focus, or click and includes the confirmed monitor, mouse, and keyboard. Reduced-motion visitors see a still model. If Sketchfab is unavailable, the original GPU illustration remains visible. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
 
 An original canvas atmosphere adds a slow crimson vortex and flock silhouettes behind the page. It pauses when the tab is hidden and becomes static when reduced motion is requested. Game panels use softer rounded surfaces.
 
@@ -10,11 +10,14 @@ The Settings sidebar holds English/Czech language, wine/ruby/Indanthrene Blue pa
 
 GitHub, Discord, Instagram, Steam, and League of Legends icons are from [Simple Icons](https://simpleicons.org/) (CC0 1.0). The Rocket League mark is an original site illustration.
 
+The representative [RTX 5070 Ti 3D model by hakai315](https://sketchfab.com/3d-models/nvidia-rtx5070ti-1035d0d5985d4c3b8c91e3da9eb1fade) is embedded from Sketchfab under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The site credits the artist in the footer.
+
 ## Features carried over from the original site
 
 - Matěj's profile, GitHub link, working languages and project links.
 - The three-account Steam selector, combined all-profiles view, and direct profile links. With a Steam API key, it shows actual persona status and searchable visible game libraries.
 - League of Legends profile and ranked data for `Sm1ted#Diff` on EUNE, recent champions, an OP.GG shortcut, and automatic five-minute refresh.
+- Selectable League overview, combat, farming, and champion views. Recent KDA, damage, kill participation, CS, gold, and vision rates are calculated from up to five fetched matches and labeled separately from season rank.
 - The Discord username copy button.
 - Leetify views for overview, aim, utility, and duels, using fields from the public profile API.
 - Steam library search and sorting by last played date, total playtime, or name. Games without a last played date fall back to two-week activity, then lifetime hours.

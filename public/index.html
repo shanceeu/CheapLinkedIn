@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#58181F">
-  <meta name="description" content="Matěj Pertl — developer, gamer, projects and live game stats.">
-  <title>Matěj Pertl — Developer & Gamer</title>
+  <meta name="description" content="Matěj Pertl — high school student, coding projects and game stats.">
+  <title>Matěj Pertl — Student, Coder & Gamer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,6 +13,7 @@
   <script type="module" src="/app.js"></script>
   <script type="module" src="/storm.mjs"></script>
   <script type="module" src="/personalize.mjs"></script>
+  <script type="module" src="/gpu-model.mjs"></script>
 </head>
 <body>
   <canvas id="crowstorm" aria-hidden="true"></canvas>
@@ -27,16 +28,19 @@
     <main>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <h1 id="hero-title"><span>Built for code.</span><br><em id="typeout" data-en="Made for play." data-cs="Stvořen pro hru.">Made for play.</em></h1>
-          <p>Full-stack developer and gamer. Projects, ranked climbs, and the games in rotation, all in one place.</p>
+          <h1 id="hero-title"><span>Code after class.</span><br><em id="typeout" data-en="Games after hours." data-cs="Hry po večerech.">Games after hours.</em></h1>
+          <p>I’m Matěj, a high school student learning by building projects and chasing better results in the games I play.</p>
           <div class="hero-actions"><a class="button button-primary arrow-link" href="#work">Explore my work</a><a class="button button-plain arrow-link" href="#games">See game stats</a></div>
         </div>
         <div class="gpu-showcase" id="gpu-showcase">
+          <div class="gpu-stage" aria-hidden="true">
+            <img class="gpu-fallback" src="/gpu-windforce.svg" alt="" draggable="false">
+            <iframe id="gpu-model" title="3D model of a GeForce RTX 5070 Ti" tabindex="-1" loading="lazy" allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
           <button class="gpu-trigger" id="gpu-toggle" type="button" aria-controls="pc-specs" aria-expanded="false" aria-label="Show my PC setup">
             <span class="gpu-shine" aria-hidden="true"></span>
-            <img src="/gpu-windforce.svg" alt="Illustration of a Gigabyte WINDFORCE graphics card" draggable="false">
             <span class="gpu-product">Gigabyte GeForce RTX 5070 Ti <strong>WINDFORCE</strong></span>
-            <span class="gpu-hint">Scroll to move · hover or tap for my setup</span>
+            <span class="gpu-hint">Scroll to rotate · hover or tap for my setup</span>
           </button>
           <div class="pc-specs" id="pc-specs" role="region" aria-label="My PC setup" aria-hidden="true">
             <h2>My setup.</h2>
@@ -76,7 +80,15 @@
         <p class="section-intro">Three games, three views of progress. Open any player profile for the full picture.</p>
         <div class="games-list">
           <article class="game-panel game-cs" aria-labelledby="cs-title"><div class="game-top"><span class="game-code">Counter-Strike 2</span><a class="arrow-link" href="https://leetify.com/app/profile/76561199147369622" target="_blank" rel="noopener noreferrer">Leetify profile</a></div><h3 id="cs-title">Counter-Strike<br><em>2.</em></h3><p class="game-subtitle">Aim, matches and Premier rating via Leetify.</p><div data-content="leetify" class="game-data" aria-live="polite"><p class="pending">Loading Leetify…</p></div></article>
-          <article class="game-panel game-league" aria-labelledby="league-title"><div class="game-top"><span class="game-code"><img class="brand-icon" src="/icons/leagueoflegends.svg" alt="">League of Legends / EUNE</span><span class="game-links"><a class="arrow-link" href="https://www.op.gg/summoners/eune/Sm1ted-Diff" target="_blank" rel="noopener noreferrer">OP.GG</a><a class="arrow-link" href="https://tracker.gg/lol/profile/riot/Sm1ted%23Diff/overview" target="_blank" rel="noopener noreferrer">Tracker</a></span></div><h3 id="league-title">League of<br><em>Legends.</em></h3><p class="game-subtitle">Solo queue rank and recent matches for Sm1ted#Diff.</p><div data-content="league" class="game-data" aria-live="polite"><p class="pending">Loading Riot data…</p></div></article>
+          <article class="game-panel game-league" aria-labelledby="league-title">
+            <div class="game-top"><span class="game-code"><img class="brand-icon" src="/icons/leagueoflegends.svg" alt="">League of Legends / EUNE</span><span class="game-links"><a class="arrow-link" href="https://www.op.gg/summoners/eune/Sm1ted-Diff" target="_blank" rel="noopener noreferrer">OP.GG</a><a class="arrow-link" href="https://tracker.gg/lol/profile/riot/Sm1ted%23Diff/overview" target="_blank" rel="noopener noreferrer">Tracker</a></span></div>
+            <h3 id="league-title">League of<br><em>Legends.</em></h3>
+            <p class="game-subtitle">Solo queue rank and recent matches for Sm1ted#Diff.</p>
+            <div class="game-data league-data">
+              <div class="stat-switch" id="league-stat-switch" role="group" aria-label="Choose League stats"><button type="button" data-league-view="overview" aria-pressed="true" disabled>Overview</button><button type="button" data-league-view="combat" aria-pressed="false" disabled>Combat</button><button type="button" data-league-view="farming" aria-pressed="false" disabled>Farming</button><button type="button" data-league-view="champions" aria-pressed="false" disabled>Champions</button></div>
+              <div data-content="league" aria-live="polite"><p class="pending">Loading Riot data…</p></div>
+            </div>
+          </article>
           <article class="game-panel game-rocket" aria-labelledby="rocket-title"><div class="game-top"><span class="game-code"><img class="brand-icon" src="/icons/rocketleague.svg" alt="">Rocket League / Epic</span><a class="arrow-link" href="https://rocketleague.tracker.network/rocket-league/profile/epic/Matees_czech/overview" target="_blank" rel="noopener noreferrer">Live profile</a></div><h3 id="rocket-title">Rocket<br><em>League.</em></h3><p class="game-subtitle">Live profile and optional uploaded replay stats.</p><div data-content="rocket" class="game-data" aria-live="polite"><p class="pending">Loading replays…</p></div></article>
         </div>
       </section>
@@ -91,7 +103,7 @@
 
       <section class="contact-section section-block" id="contact" aria-labelledby="contact-title"><div><h2 id="contact-title">See you in the<br><em>lobby.</em></h2><p>Find me on GitHub, Instagram, Steam, or copy my Discord username.</p></div><div class="contact-actions"><a class="arrow-link" href="https://github.com/shanceeu" target="_blank" rel="noopener noreferrer"><span class="contact-label"><img class="brand-icon" src="/icons/github.svg" alt="">GitHub</span></a><a class="arrow-link" href="https://www.instagram.com/perma_matees/" target="_blank" rel="noopener noreferrer"><span class="contact-label"><img class="brand-icon" src="/icons/instagram.svg" alt="">Instagram</span></a><button id="copyDiscordTag" type="button" aria-label="Copy Discord username m4t335_cz3ch"><span class="contact-label"><img class="brand-icon" src="/icons/discord.svg" alt="">Discord</span><strong>m4t335_cz3ch</strong><span id="copy-status" role="status">Copy</span></button><a class="arrow-link" href="https://steamcommunity.com/profiles/76561199147369622/" target="_blank" rel="noopener noreferrer"><span class="contact-label"><img class="brand-icon" src="/icons/steam.svg" alt="">Steam</span></a></div></section>
     </main>
-    <footer><span>© <span id="year">2026</span> Matěj Pertl</span><span>Built for code and everything between.</span><a href="#top">Back to top</a></footer>
+    <footer><span>© <span id="year">2026</span> Matěj Pertl</span><span>Built for code and everything between.</span><a href="https://sketchfab.com/3d-models/nvidia-rtx5070ti-1035d0d5985d4c3b8c91e3da9eb1fade" target="_blank" rel="noopener noreferrer">3D model by hakai315 · CC BY 4.0 ↗</a><a href="#top">Back to top</a></footer>
   </div>
   <dialog id="tool-drawer" class="tool-drawer" aria-labelledby="drawer-title">
     <div class="drawer-head"><h2 id="drawer-title">Settings.</h2><button id="tools-close" type="button" aria-label="Close settings">Close</button></div>

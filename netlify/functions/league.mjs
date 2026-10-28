@@ -12,24 +12,66 @@ export function shapeLeague(entries, matches, puuid, name, tag) {
   const recent = matches.map(match => {
     const player = match?.info?.participants?.find(participant => participant.puuid === puuid);
     if (!player) return null;
+    const durationRaw = number(match.info.gameDuration);
+    const durationMinutes = durationRaw && durationRaw > 0 ? (durationRaw > 86400 ? durationRaw / 60000 : durationRaw / 60) : null;
+    const teamKills = player.teamId === undefined ? null : match.info.participants
+      .filter(participant => participant.teamId === player.teamId)
+      .reduce((sum, participant) => sum + (number(participant.kills) ?? 0), 0);
+    const kills = number(player.kills);
+    const deaths = number(player.deaths);
+    const assists = number(player.assists);
+    const minions = number(player.totalMinionsKilled);
+    const monsters = number(player.neutralMinionsKilled);
     return {
       champion: player.championName || "Champion",
       result: player.win ? "Win" : "Loss",
-      kills: number(player.kills) ?? 0,
-      deaths: number(player.deaths) ?? 0,
-      assists: number(player.assists) ?? 0,
+      kills: kills ?? 0, deaths: deaths ?? 0, assists: assists ?? 0,
+      cs: minions === null && monsters === null ? null : (minions ?? 0) + (monsters ?? 0),
+      damage: number(player.totalDamageDealtToChampions),
+      gold: number(player.goldEarned),
+      vision: number(player.visionScore),
+      killParticipation: teamKills && kills !== null && assists !== null ? (kills + assists) / teamKills : null,
+      durationMinutes,
       date: match.info.gameEndTimestamp || match.info.gameCreation || null,
     };
   }).filter(Boolean);
   const championCounts = new Map();
-  for (const match of recent) championCounts.set(match.champion, (championCounts.get(match.champion) || 0) + 1);
-  const recentChampions = [...championCounts].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([champion]) => champion);
+  for (const match of recent) {
+    const record = championCounts.get(match.champion) || { champion: match.champion, games: 0, wins: 0 };
+    record.games++;
+    if (match.result === "Win") record.wins++;
+    championCounts.set(match.champion, record);
+  }
+  const champions = [...championCounts.values()].sort((a, b) => b.games - a.games || a.champion.localeCompare(b.champion));
+  const recentChampions = champions.slice(0, 3).map(item => item.champion);
+  const sum = field => recent.reduce((total, match) => total + (match[field] ?? 0), 0);
+  const average = field => recent.length ? sum(field) / recent.length : null;
+  const averageKnown = field => {
+    const eligible = recent.filter(match => match[field] !== null);
+    return eligible.length ? eligible.reduce((total, match) => total + match[field], 0) / eligible.length : null;
+  };
+  const perMinute = field => {
+    const eligible = recent.filter(match => match[field] !== null && match.durationMinutes);
+    const minutes = eligible.reduce((total, match) => total + match.durationMinutes, 0);
+    return minutes ? eligible.reduce((total, match) => total + match[field], 0) / minutes : null;
+  };
+  const kpMatches = recent.filter(match => match.killParticipation !== null);
+  const totalDeaths = sum("deaths");
+  const recentStats = {
+    sample: recent.length,
+    winRate: recent.length ? recent.filter(match => match.result === "Win").length / recent.length : null,
+    kda: recent.length ? (sum("kills") + sum("assists")) / Math.max(1, totalDeaths) : null,
+    avgKills: average("kills"), avgDeaths: average("deaths"), avgAssists: average("assists"),
+    avgDamage: averageKnown("damage"),
+    killParticipation: kpMatches.length ? kpMatches.reduce((total, match) => total + match.killParticipation, 0) / kpMatches.length : null,
+    csPerMinute: perMinute("cs"), goldPerMinute: perMinute("gold"), visionPerMinute: perMinute("vision"), damagePerMinute: perMinute("damage"),
+  };
   return {
     state: "ready", name: `${name}#${tag}`,
     rank: ranked ? `${ranked.tier} ${ranked.rank}` : "Unranked",
     lp: number(ranked?.leaguePoints),
     wins: number(ranked?.wins), losses: number(ranked?.losses),
-    recent, recentChampions,
+    recent, recentChampions, recentStats, champions,
     source: `https://tracker.gg/lol/profile/riot/${encodeURIComponent(`${name}#${tag}`)}/overview`,
   };
 }

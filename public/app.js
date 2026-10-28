@@ -10,7 +10,7 @@ const create = (tag, className = "", value) => {
 };
 const fmt = value => value === null || value === undefined ? "—" : new Intl.NumberFormat(locale()).format(value);
 const pct = value => value === null || value === undefined ? "—" : `${Math.round(value * 100)}%`;
-const decimal = (value, digits = 1, suffix = "") => value === null || value === undefined ? "—" : `${value.toFixed(digits)}${suffix}`;
+const decimal = (value, digits = 1, suffix = "") => value === null || value === undefined ? "—" : `${new Intl.NumberFormat(locale(), { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value)}${suffix}`;
 const shortDate = value => {
   if (!value) return "";
   const parsed = new Date(value);
@@ -108,16 +108,43 @@ function renderLeetify(data) {
   root.replaceChildren(content);
 }
 
+let leagueView = "overview";
 function renderLeague(data) {
   const root = $('[data-content="league"]');
+  for (const button of document.querySelectorAll("#league-stat-switch button")) {
+    button.disabled = data.state !== "ready";
+    button.setAttribute("aria-pressed", String(button.dataset.leagueView === leagueView));
+  }
   if (data.state !== "ready") return stateMessage(root, data);
   const content = document.createDocumentFragment();
   content.append(create("p", "player-name", data.name));
-  content.append(metrics([["Solo queue", data.rank], ["League points", fmt(data.lp)], ["Ranked record", data.wins === null ? "—" : `${data.wins}W · ${data.losses ?? 0}L`]]));
-  if (data.recentChampions?.length) {
-    const champions = create("p", "source-note", language() === "cs" ? `Poslední šampioni (${data.recent.length} zápasů): ${data.recentChampions.join(" · ")}` : `Recent champions (${data.recent.length} matches): ${data.recentChampions.join(" · ")}`);
+  const stats = data.recentStats || {};
+  const detail = create("div", "detail-line");
+  const addDetail = (label, value) => detail.append(create("span", "", t(label)), create("strong", "", value));
+  if (leagueView === "combat") {
+    content.append(metrics([["Recent KDA", decimal(stats.kda, 2)], ["Avg champion damage", stats.avgDamage == null ? "—" : fmt(Math.round(stats.avgDamage))], ["Kill participation", pct(stats.killParticipation)]]));
+    addDetail("Average K / D / A", `${decimal(stats.avgKills)} / ${decimal(stats.avgDeaths)} / ${decimal(stats.avgAssists)}`);
+  } else if (leagueView === "farming") {
+    content.append(metrics([["CS / min", decimal(stats.csPerMinute)], ["Gold / min", stats.goldPerMinute == null ? "—" : fmt(Math.round(stats.goldPerMinute))], ["Vision / min", decimal(stats.visionPerMinute, 2)]]));
+    addDetail("Champion damage / min", stats.damagePerMinute == null ? "—" : fmt(Math.round(stats.damagePerMinute)));
+  } else if (leagueView === "champions") {
+    content.append(metrics([["Most played", data.champions?.[0]?.champion || "—"], ["Unique champions", fmt(data.champions?.length)], ["Recent matches", fmt(stats.sample)]]));
+    const champions = create("div", "league-champions");
+    for (const champion of (data.champions || []).slice(0, 4)) {
+      const row = create("div", "league-champion");
+      const games = language() === "cs" ? `${champion.games} ${champion.games === 1 ? "zápas" : champion.games < 5 ? "zápasy" : "zápasů"}` : `${champion.games} ${champion.games === 1 ? "game" : "games"}`;
+      const wins = language() === "cs" ? `${champion.wins} ${champion.wins === 1 ? "výhra" : champion.wins < 5 && champion.wins > 1 ? "výhry" : "výher"}` : `${champion.wins} ${champion.wins === 1 ? "win" : "wins"}`;
+      row.append(create("strong", "", champion.champion), create("span", "", `${games} · ${wins}`));
+      champions.append(row);
+    }
     content.append(champions);
+  } else {
+    content.append(metrics([["Solo queue", data.rank], ["League points", fmt(data.lp)], ["Ranked record", data.wins === null ? "—" : `${data.wins}W · ${data.losses ?? 0}L`]]));
+    addDetail("Ranked win rate", data.wins === null || data.losses === null || !data.wins && !data.losses ? "—" : pct(data.wins / (data.wins + data.losses)));
+    addDetail("Recent win rate", pct(stats.winRate));
   }
+  if (detail.childNodes.length) content.append(detail);
+  content.append(create("p", "source-note", t("Recent match stats use up to five games; solo queue rank covers the current season.")));
   content.append(matchList(data.recent, item => `${item.champion} · ${item.kills}/${item.deaths}/${item.assists}`));
   root.replaceChildren(content);
 }
@@ -232,6 +259,13 @@ function renderSteam(data) {
 }
 
 const latest = {};
+$("#league-stat-switch").addEventListener("click", event => {
+  const button = event.target.closest("button[data-league-view]");
+  if (!button || button.disabled || !latest.league) return;
+  leagueView = button.dataset.leagueView;
+  renderLeague(latest.league);
+  button.focus();
+});
 let lastChecked = null;
 function showChecked() {
   if (!lastChecked) return;
@@ -293,8 +327,6 @@ function syncScroll() {
   const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   document.documentElement.style.setProperty('--scroll-progress', `${Math.min(100, window.scrollY / maxScroll * 100)}%`);
   const gpuPhase = reducedScrollMotion.matches ? 0 : Math.min(1, Math.max(0, window.scrollY / Math.max(1, window.innerHeight)));
-  document.documentElement.style.setProperty('--gpu-rise', `${Math.round(gpuPhase * -26)}px`);
-  document.documentElement.style.setProperty('--gpu-rotate', `${(gpuPhase * 5 - 2.5).toFixed(2)}deg`);
   document.documentElement.style.setProperty('--gpu-scan', `${Math.round(gpuPhase * 130 - 65)}%`);
   document.body.classList.toggle('is-scrolled', window.scrollY > 36);
   let activeId = null;
