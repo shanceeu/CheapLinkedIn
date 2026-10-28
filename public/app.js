@@ -1,4 +1,4 @@
-import { sortGames } from "./sort.mjs";
+import { selectGames, sortGames } from "./sort.mjs";
 import { locale, language, onLanguageChange, t } from "./i18n.mjs";
 
 const $ = selector => document.querySelector(selector);
@@ -135,20 +135,35 @@ function renderRocket(data) {
   root.replaceChildren(content);
 }
 
-const accounts = ["76561199147369622", "76561199113854269", "76561199527518684"];
 let libraries = [];
 let steamReady = false;
 let visibleGames = 12;
 
 function updateSteamAccount() {
   const id = $("#steam-profile").value;
+  const all = id === "all";
   const library = libraries.find(item => item.id === id);
-  $("#steam-id").textContent = id;
-  $("#steam-link").href = `https://steamcommunity.com/profiles/${id}/`;
+  $("#steam-id-label").textContent = t(all ? "Selected profiles" : "Selected Steam ID");
+  $("#steam-id").textContent = all ? (language() === "cs" ? "3 profily" : "3 profiles") : id;
+  $("#steam-link").hidden = all;
+  if (!all) $("#steam-link").href = `https://steamcommunity.com/profiles/${id}/`;
+  const profileLinks = $("#steam-profile-links");
+  profileLinks.replaceChildren();
+  if (all) {
+    for (const account of [...$("#steam-profile").options].filter(option => option.value !== "all")) {
+      const link = create("a", "text-link", language() === "cs" ? `Hry · ${account.textContent}` : `${account.textContent} games`);
+      link.href = `https://steamcommunity.com/profiles/${account.value}/games/`;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      profileLinks.append(link);
+    }
+  }
   const status = $("#steam-status");
-  status.textContent = t(library?.status || "Status requires Steam API key");
-  status.classList.toggle("online", library?.status === "Online");
-  $("#steam-count").textContent = library ? (language() === "cs" ? `${fmt(library.count)} veřejných her · ${library.name}` : `${fmt(library.count)} visible games · ${library.name}`) : (language() === "cs" ? `Knihovna: ${t($("#steam-profile").selectedOptions[0].textContent)}` : `${$("#steam-profile").selectedOptions[0].textContent} library`);
+  status.textContent = all ? (steamReady ? (language() === "cs" ? "Knihovny připojeny" : "Libraries connected") : t("Status requires Steam API key")) : t(library?.status || "Status requires Steam API key");
+  status.classList.toggle("online", !all && library?.status === "Online");
+  $("#steam-count").textContent = all
+    ? (steamReady ? (language() === "cs" ? `${fmt(libraries.reduce((sum, item) => sum + item.count, 0))} veřejných her · ${libraries.length} profily` : `${fmt(libraries.reduce((sum, item) => sum + item.count, 0))} visible games · ${libraries.length} profiles`) : t("Steam libraries"))
+    : library ? (language() === "cs" ? `${fmt(library.count)} veřejných her · ${library.name}` : `${fmt(library.count)} visible games · ${library.name}`) : (language() === "cs" ? `Knihovna: ${t($("#steam-profile").selectedOptions[0].textContent)}` : `${$("#steam-profile").selectedOptions[0].textContent} library`);
   visibleGames = 12;
   renderGames();
 }
@@ -156,9 +171,9 @@ function updateSteamAccount() {
 function renderGames() {
   if (!steamReady) return;
   const root = $("#steam-content");
-  const library = libraries.find(item => item.id === $("#steam-profile").value);
+  const all = $("#steam-profile").value === "all";
   const query = $("#steam-search").value.trim().toLowerCase();
-  const games = sortGames((library?.games || []).filter(game => game.name.toLowerCase().includes(query)), $("#steam-sort").value);
+  const games = sortGames(selectGames(libraries, $("#steam-profile").value).filter(game => game.name.toLowerCase().includes(query)), $("#steam-sort").value);
   if (!games.length) {
     root.replaceChildren(create("p", "empty", t(query ? "No games match that search." : "This profile has no visible game details.")));
     return;
@@ -180,7 +195,7 @@ function renderGames() {
     const name = create("span", "game-name");
     const playedDate = game.lastPlayed ? new Intl.DateTimeFormat(locale(), { day: "numeric", month: "short", year: "numeric" }).format(game.lastPlayed * 1000) : null;
     const activity = language() === "cs" ? (playedDate ? `Naposledy hráno ${playedDate} · ${fmt(game.recentHours)} h za 2 týdny` : `${fmt(game.recentHours)} h za 2 týdny`) : (playedDate ? `Last played ${playedDate} · ${fmt(game.recentHours)} h in last 2 weeks` : `${fmt(game.recentHours)} h in last 2 weeks`);
-    name.append(create("strong", "", game.name), create("small", "", activity));
+    name.append(create("strong", "", game.name), create("small", "", all ? `${game.profileName} · ${activity}` : activity));
     row.append(name, create("span", "game-hours", `${fmt(game.hours)} h`));
     list.append(row);
   }
@@ -202,16 +217,6 @@ function renderSteam(data) {
     $("#steam-search").disabled = true;
     $("#steam-sort").disabled = true;
     stateMessage(root, data);
-    const links = create("div", "profile-links");
-    for (const id of data.ids || accounts) {
-      const account = [...$("#steam-profile").options].find(option => option.value === id);
-      const link = create("a", "text-link", language() === "cs" ? `Hry – ${t(account?.textContent || "Steam account")}` : `${account?.textContent || "Steam account"} games`);
-      link.href = `https://steamcommunity.com/profiles/${id}/games/`;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      links.append(link);
-    }
-    root.append(links);
     updateSteamAccount();
     return;
   }

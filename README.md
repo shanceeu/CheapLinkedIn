@@ -13,7 +13,7 @@ GitHub, Discord, Instagram, Steam, and League of Legends icons are from [Simple 
 ## Features carried over from the original site
 
 - Matěj's profile, GitHub link, working languages and project links.
-- The three-account Steam selector and direct profile links. With a Steam API key, it now shows actual persona status and searchable visible game libraries.
+- The three-account Steam selector, combined all-profiles view, and direct profile links. With a Steam API key, it shows actual persona status and searchable visible game libraries.
 - League of Legends profile and ranked data for `Sm1ted#Diff` on EUNE, recent champions, an OP.GG shortcut, and automatic five-minute refresh.
 - The Discord username copy button.
 - Leetify views for overview, aim, utility, and duels, using fields from the public profile API.
