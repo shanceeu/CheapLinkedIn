@@ -80,7 +80,8 @@ body.is-scrolled .site-header { height: 68px; background: var(--wine-deep); }
 .gpu-showcase { position: relative; justify-self: end; width: min(42vw, 560px); min-width: 330px; aspect-ratio: 1; isolation: isolate; }
 .gpu-showcase::before { content: ""; position: absolute; inset: 10% 0 12%; border-radius: 50%; background: radial-gradient(ellipse, var(--wine-light), transparent 67%); opacity: .5; filter: blur(28px); pointer-events: none; }
 .gpu-stage { position: absolute; z-index: 1; inset: 8% 1% 35%; overflow: hidden; border-radius: 16px; perspective: 900px; background: #272328; }
-.gpu-fallback { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; transform: rotateY(var(--model-turn, 0deg)); transition: opacity .35s; }
+.gpu-fallback { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; animation: gpu-turn 12s ease-in-out infinite alternate; transition: opacity .35s; }
+@keyframes gpu-turn { from { transform: rotateY(-12deg) translateY(3px); } to { transform: rotateY(12deg) translateY(-3px); } }
 #gpu-model { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity .4s; pointer-events: none; }
 .gpu-showcase.has-model .gpu-fallback { opacity: 0; }
 .gpu-showcase.has-model #gpu-model { opacity: 1; }
@@ -367,7 +368,8 @@ footer a { color: var(--cream); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
-  .gpu-fallback, .gpu-shine { transform: none; }
+  .gpu-fallback { animation: none; transform: none; }
+  .gpu-shine { transform: none; }
   #typeout::after { animation: none; }
 }
 

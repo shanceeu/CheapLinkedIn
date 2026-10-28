@@ -2,7 +2,7 @@
 
 A redesigned portfolio with selected GitHub repositories, Discord contact, three Steam profiles, and game stats for CS2, League of Legends, and Rocket League. It deploys as a static site with Netlify Functions. API keys remain server-side.
 
-The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress and navigation. The hero features a representative GeForce RTX 5070 Ti 3D model whose camera rotates as the page scrolls, while the owner's exact Gigabyte WINDFORCE model remains named in the PC specs panel. The panel opens on hover, focus, or click and includes the confirmed monitor, mouse, and keyboard. Reduced-motion visitors see a still model. If Sketchfab is unavailable, the original GPU illustration remains visible. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
+The interface uses a dark `#58181F` palette, open list layouts, and scroll-aware progress and navigation. The hero features a representative GeForce RTX 5070 Ti 3D model that turns automatically while visible. The owner's exact Gigabyte WINDFORCE model remains named in the PC specs panel. The panel opens on hover, focus, or click and includes the confirmed monitor, mouse, and keyboard. Reduced-motion visitors see a still model. If Sketchfab is unavailable, the original GPU illustration remains visible and turns gently on its own. Steam account names appear without ID suffixes in the selector; the full ID remains visible beside the profile link.
 
 An original canvas atmosphere adds a slow crimson vortex and flock silhouettes behind the page. It pauses when the tab is hidden and becomes static when reduced motion is requested. Game panels use softer rounded surfaces.
 
