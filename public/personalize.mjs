@@ -6,7 +6,7 @@ const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const preferences = {
   accent: ["wine", "ruby", "blue"],
   effect: ["storm", "matrix", "still"],
-  cursor: ["system", "halo"],
+  cursor: ["system", "halo", "crosshair"],
 };
 function saved(key, fallback) {
   const value = localStorage.getItem(`site-${key}`);
