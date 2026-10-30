@@ -152,14 +152,10 @@ body.is-scrolled .site-header { height: 68px; background: var(--wine-deep); }
 .chapter-rail a[aria-current="location"]::before { background: linear-gradient(to bottom, var(--accent-solid) var(--chapter-fill, 0%), var(--line) var(--chapter-fill, 0%)); }
 .chapter-rail a:hover::before, .chapter-rail a:focus-visible::before { background: var(--rose); }
 .chapter-rail a:focus-visible { overflow: visible; outline-offset: 0; }
-#custom-cursor { position: fixed; z-index: 100; left: 0; top: 0; width: 26px; height: 26px; margin: -13px; border: 1px solid var(--rose); border-radius: 50%; pointer-events: none; opacity: 0; scale: 1; transition: opacity .15s, scale .2s; }
-#custom-cursor.visible { opacity: 1; }
-#custom-cursor.over-action { scale: 1.45; }
-:root:not([data-cursor="halo"]) #custom-cursor { display: none; }
-@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  :root[data-cursor="halo"] body, :root[data-cursor="halo"] body * { cursor: none !important; }
+@media (pointer: fine) {
+  :root[data-cursor="halo"], :root[data-cursor="halo"] * { cursor: url("/halo-cursor.svg") 16 16, auto !important; }
+  :root[data-cursor="halo"] input[type="text"], :root[data-cursor="halo"] input[type="search"], :root[data-cursor="halo"] input[type="number"], :root[data-cursor="halo"] textarea { cursor: text !important; }
 }
-@media (pointer: coarse), (prefers-reduced-motion: reduce) { #custom-cursor { display: none; } }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 34px; margin-bottom: 63px; }
 .section-heading h2, .contact-section h2 { margin: 0; font-family: "Space Grotesk", sans-serif; font-size: clamp(3.7rem, 6.5vw, 6rem); font-weight: 600; letter-spacing: -.04em; line-height: .93; }
 .section-heading p { max-width: 35ch; margin: 0 0 8px; color: var(--muted); font-size: 15px; line-height: 1.6; }
