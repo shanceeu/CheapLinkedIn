@@ -7,11 +7,13 @@ const finePointer = matchMedia("(pointer: fine)");
 const preferences = {
   accent: ["wine", "ruby", "blue"],
   effect: ["storm", "matrix", "still"],
-  cursor: ["system", "halo", "crosshair"],
+  cursor: ["system", "halo"],
 };
 function saved(key, fallback) {
   const value = localStorage.getItem(`site-${key}`);
-  return preferences[key]?.includes(value) ? value : fallback;
+  if (preferences[key]?.includes(value)) return value;
+  if (value !== null) localStorage.removeItem(`site-${key}`);
+  return fallback;
 }
 
 translateStatic();
